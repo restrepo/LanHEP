@@ -1,0 +1,22 @@
+
+external_func(initQCD,4).
+external_func(McRun,1).
+external_func(MbRun,1).
+external_func(MtRun,1).
+external_func(alphaQCD,1).
+external_func(McEff,1).
+external_func(MbEff,1).
+external_func(MtEff,1).
+
+external_func(slhaVal,*).
+external_func(System,*).  
+external_func(aPrintF,*).    
+external_func(openAppend,1).
+external_func (slhaRead,2).
+
+external_func(initDiagonal,0).
+external_func(rDiagonal,*).
+external_func(rDiagonalA,*).
+external_func(MassArray,2).
+external_func(MixMatrix,3).
+external_func(MixMatrixU,3).
