@@ -1,0 +1,5 @@
+QCD
+ Particles 
+ Full  name  | P | aP|2*spin| mass |width |color|aux|>      LaTeX(A)      <|>     LaTeX(A+)      <|
+gluon        |G  |G  |2     |0     |0     |8    |G  |G                     |G                     |
+quark        |q  |Q  |1     |Mq    |0     |3    |   |q                     |Q                     |
