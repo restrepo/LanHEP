@@ -5,9 +5,9 @@
 keys gauge_fixing=unitary.
 
 do_if gauge_fixing==Feynman.
-    model 'IDM Model (Feyn. gauge)'/1.
+    model 'Standard Model (Feyn. gauge)'/1.
 do_else_if gauge_fixing==unitary.
-    model 'IDM Model (un. gauge)'/1.
+    model 'Standard Model (un. gauge)'/1.
 do_else.
     write('Error: the key "gauge" should be either "Feynman" or "unitary".').
     quit.
