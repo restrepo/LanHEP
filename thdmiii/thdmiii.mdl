@@ -1,17 +1,8 @@
 %
-% IDM Model - unitary and t'Hooft-Feynman gauges.
+% THDM III Model - t'Hooft-Feynman gauge.
 %
 
-keys gauge_fixing=unitary.
-
-do_if gauge_fixing==Feynman.
-    model 'Standard Model (Feyn. gauge)'/1.
-do_else_if gauge_fixing==unitary.
-    model 'Standard Model (un. gauge)'/1.
-do_else.
-    write('Error: the key "gauge" should be either "Feynman" or "unitary".').
-    quit.
-end_if.
+model 'THDM III (Feyn. gauge)'/1.
 
 option ReduceGamma5=0.
 let g5=gamma5.
@@ -56,23 +47,11 @@ parameter  Vud = c12*c13 		: 'C-K-M matrix element',
 
 OrthMatrix( { {Vud,Vus,Vub}, {Vcd,Vcs,Vcb}, {Vtd,Vts,Vtb}} ).
 
-do_if gauge_fixing==Feynman.
-
 vector  
 	A/A: (photon, gauge),
 	Z/Z:('Z boson', mass MZ = 91.187, width wZ = 2.502, gauge),
 	G/G: (gluon, color c8, gauge),
 	'W+'/'W-': ('W boson', mass MW = MZ*CW, width wW = 2.094, gauge).
-
-do_else.
-
-vector  
-	A/A: (photon, gauge),
-	Z/Z:('Z boson', mass MZ = 91.187, width wZ = 2.502),
-	G/G: (gluon, color c8, gauge),
-	'W+'/'W-': ('W boson', mass MW = MZ*CW, width wW = 2.094).
-
-end_if.
 
 spinor 		n1:(neutrino,left), 	   e1:(electron),
 		n2:('mu-neutrino',left),   e2:(muon, mass Mm  = 0.1057),
@@ -96,15 +75,12 @@ let q3={t,b}, Q3={T,B}, q3a={t,Vtd*d+Vts*s+Vtb*b}, Q3a={T,Vtd*D+Vts*S+Vtb*B}.
 let B1= -SW*Z+CW*A, W3=CW*Z+SW*A, W1=('W+'+'W-')/Sqrt2,
 	 W2 = i*('W+'-'W-')/Sqrt2.
 
-do_if gauge_fixing==Feynman.
 
 let gh1 = ('W+.c'+'W-.c')/Sqrt2, gh2= i*('W+.c'-'W-.c')/Sqrt2,
 		gh3= CW*'Z.c'+SW*'A.c', gh={gh1,gh2,gh3}.
 
 let Gh1 = ('W+.C'+'W-.C')/Sqrt2, Gh2=i*('W+.C'-'W-.C')/Sqrt2, 
 		Gh3= CW*'Z.C'+SW*'A.C', Gh={Gh1,Gh2,Gh3}. 
-
-end_if.
 
 let WW1 = {W1,  W2 , W3}, WW = {'W+',W3,'W-'}.
 
@@ -164,17 +140,9 @@ lterm  GG*anti(psi)*lambda*gamma*G*psi where
 % scalar sector
 scalar h/h:(Higgs, mass Mh = 130, width wh = 1.461).
 
-do_if gauge_fixing==Feynman.
-
 let ph1 = { -i*'W+.f',  (vev(2*MW/EE*SW)+h+i*'Z.f')/Sqrt2 }, 
     PH1 = {  i*'W-.f',  (vev(2*MW/EE*SW)+h-i*'Z.f')/Sqrt2 }.
 
-do_else.
-
-let ph1 = { 0,  (vev(2*MW/EE*SW)+h)/Sqrt2 }, 
-    PH1 = { 0,  (vev(2*MW/EE*SW)+h)/Sqrt2 }.
-    
-end_if.
 
 parameter unvev = (2*MW*SW)/EE.
 
@@ -223,8 +191,6 @@ lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*PH1 )
 lterm -i*GG*f_SU3*ccghost(G)*G^mu*deriv^mu*ghost(G).
 lterm  -1/2*(deriv*G)**2.
 
-do_if gauge_fixing==Feynman.
-
 %lterm -g*eps*gh*WW1*deriv*Gh.
 
 lterm g*eps*deriv*Gh*gh*WW1.
@@ -245,7 +211,6 @@ lterm i*EE*MW/2/CW/SW*(
 			+2*CW*SW*'W-.C'*'A.c') -
 	'W-.f'*('W+.C'*'Z.c'*(1-2*SW**2)+'W+.c'*'Z.C'
 			+2*CW*SW*'W+.C'*'A.c')).
-end_if.
 
 SetAngle(1-SW**2=CW**2).
 SetEM(A,EE).
