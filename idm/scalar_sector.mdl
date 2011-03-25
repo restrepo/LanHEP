@@ -1,0 +1,61 @@
+scalar H/H:(Higgs, mass MH = 130, width wH = 1.461),
+       '~H+'/'~H-': ('Charged Higgs', mass MH1 = 200, width whc = 1.0),
+       '~A0'/'~A0': ('A0 Scalar', mass MA0 = 125.672590488, width wA0 = 1.0),
+       '~H0'/'~H0': ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0).
+
+do_if gauge_fixing==Feynman.
+
+let ph1 = { -i*'W+.f',  (vev(2*MW/EE*SW)+H+i*'Z.f')/Sqrt2 }, 
+    PH1 = {  i*'W-.f',  (vev(2*MW/EE*SW)+H-i*'Z.f')/Sqrt2 }.
+
+let ph2 = {-i*'~H+',('~H0'+i*'~A0')/Sqrt2},
+    PH2 = {i*'~H-',('~H0'-i*'~A0')/Sqrt2}.
+
+do_else.
+
+let ph1 = { 0,  (vev(2*MW/EE*SW)+H)/Sqrt2 }, 
+    PH1 = { 0,  (vev(2*MW/EE*SW)+H)/Sqrt2 }.
+
+let ph2 = {-i*'~H+',('~H0'+i*'~A0')/Sqrt2},
+    PH2 = {i*'~H-',('~H0'-i*'~A0')/Sqrt2}.
+    
+end_if.
+
+parameter  La2 = 3.0 : 'autointeraction',
+           LaL = -0.4 : 'MH0 lambda'.
+
+parameter unvev = (2*MW*SW)/EE.
+
+parameter La4 = (MH0**2+MA0**2-2*MH1**2)/unvev**2        : 'lambda 4',
+          La5 = (MH0**2-MA0**2)/unvev**2                 : 'lambda 5',
+          La3 = 2*(MH1**2-MH0**2+LaL*unvev**2)/unvev**2  : 'lambda 3',
+          mu22= MH0**2-LaL*unvev**2                      : 'mu2 squared'. 
+
+lterm -2*La1*(ph1*PH1-v**2/2)**2  where 
+	La1=(g*MH/MW)**2/16, v=2*MW*SW/EE.
+
+lterm -La2*(PH2*ph2)**2.
+
+lterm -La3*(ph1*PH1*ph2*PH2).
+
+lterm -La4*(PH1*ph2*PH2*ph1).
+
+lterm -La5*(PH1*ph2*PH1*ph2+PH2*ph1*PH2*ph1)/2.
+
+lterm (mu22)*PH2*ph2.
+
+let Dph1^mu^a = (deriv^mu+i*g1/2*B1^mu)*ph1^a +
+	 i*g/2*taupm^a^b^c*WW^mu^c*ph1^b.
+
+let DPH1^mu^a = (deriv^mu-i*g1/2*B1^mu)*PH1^a 
+	-i*g/2*taupm^a^b^c*{'W-'^mu,W3^mu,'W+'^mu}^c*PH1^b.
+
+lterm DPH1*Dph1.
+
+let Dph2^mu^a = (deriv^mu+i*g1/2*B1^mu)*ph2^a +
+	 i*g/2*taupm^a^b^c*WW^mu^c*ph2^b.
+
+let DPH2^mu^a = (deriv^mu-i*g1/2*B1^mu)*PH2^a 
+	-i*g/2*taupm^a^b^c*{'W-'^mu,W3^mu,'W+'^mu}^c*PH2^b.
+
+lterm DPH2*Dph2.
