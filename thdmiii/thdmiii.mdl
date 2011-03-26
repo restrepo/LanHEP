@@ -137,14 +137,41 @@ lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 lterm  GG*anti(psi)*lambda*gamma*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
-% scalar sector
+%%%%%%%% scalar sector
 scalar 
      h/h:(Higgs, mass Mh = 130, width wh = 1.461),
      H/H: ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0),
      A0/A0: ('A0 Scalar', mass MA0 = 125.672590488, width wA0 = 1.0),
      'H+'/'H-': ('Charged Higgs', mass MH1 = 200, width whc = 1.0).
 
+%%%%%%%%%% parametros del modelo de dos dobletes %%%%%%%%%%%%%
 
+
+let  vvev=Sqrt2*MW*SW/EE.
+
+parameter  sb=0.8:'Sinus beta', cb=sqrt(1-sb**2):'Cosine beta'.
+
+let vev1 = vvev*cb, vev2 = vvev*sb.
+
+parameter  sa = -0.5:'Sinus alpha', ca = sqrt(1-sa**2):'Cosine alpha',
+	   mu12 = 10000:'minimal condition'.
+
+parameter  sasb = sa*cb + ca*sb:'sin(a+b)', sarb = sa*cb - ca*sb:'sin(a-b)', 
+	   casb = ca*cb - sa*sb:'cos(a+b)', carb = ca*cb + sa*sb:'cos(a-b)'.
+
+parameter s2b=2*sb*cb:'sinus 2beta'.
+
+parameter c2b=cb**2-sb**2:'coseno 2beta'.
+
+
+parameter s2a=2*sa*ca:'sinus 2alpha'.
+
+parameter c2a=ca**2-sa**2:'coseno 2alpha'.
+
+parameter  rD33 = 11 : 'Matrix FCNC Down',
+	   rU33 = 7 : 'Matrix FCNC Up'.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% dobletes%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 let ph1 = { -i*'W+.f',  (vev(2*MW/EE*SW)+h+i*'Z.f')/Sqrt2 }, 
     PH1 = {  i*'W-.f',  (vev(2*MW/EE*SW)+h-i*'Z.f')/Sqrt2 }.
