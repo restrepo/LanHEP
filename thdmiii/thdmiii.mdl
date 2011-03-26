@@ -138,7 +138,13 @@ lterm  GG*anti(psi)*lambda*gamma*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
 % scalar sector
-scalar h/h:(Higgs, mass Mh = 130, width wh = 1.461).
+scalar 
+     h/h:(Higgs, mass Mh = 130, width wh = 1.461),
+     H/H: ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0),
+     A0/A0: ('A0 Scalar', mass MA0 = 125.672590488, width wA0 = 1.0),
+     'H+'/'H-': ('Charged Higgs', mass MH1 = 200, width whc = 1.0).
+
+
 
 let ph1 = { -i*'W+.f',  (vev(2*MW/EE*SW)+h+i*'Z.f')/Sqrt2 }, 
     PH1 = {  i*'W-.f',  (vev(2*MW/EE*SW)+h-i*'Z.f')/Sqrt2 }.
@@ -161,7 +167,7 @@ lterm DPH1*Dph1.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16).
+prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, 'A0'=35, H=36, 'H+'=37).
 
 lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*PH1 )
     where
