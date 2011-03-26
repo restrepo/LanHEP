@@ -1,5 +1,5 @@
 %
-% IDM Model - unitary and t'Hooft-Feynman gauges.
+% Standard Model - unitary and t'Hooft-Feynman gauges.
 %
 
 keys gauge_fixing=unitary.
