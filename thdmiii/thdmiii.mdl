@@ -72,6 +72,7 @@ let q1={u,d}, Q1={U,D}, q1a={u,Vud*d+Vus*s+Vub*b}, Q1a={U,Vud*D+Vus*S+Vub*B}.
 let q2={c,s}, Q2={C,S}, q2a={c,Vcd*d+Vcs*s+Vcb*b}, Q2a={C,Vcd*D+Vcs*S+Vcb*B}. 
 let q3={t,b}, Q3={T,B}, q3a={t,Vtd*d+Vts*s+Vtb*b}, Q3a={T,Vtd*D+Vts*S+Vtb*B}.
 
+
 let B1= -SW*Z+CW*A, W3=CW*Z+SW*A, W1=('W+'+'W-')/Sqrt2,
 	 W2 = i*('W+'-'W-')/Sqrt2.
 
@@ -216,29 +217,74 @@ prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=37, e1=1
 %%%Yukawa Tipo II
 lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*Ph1 )
     where
-%	M=Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
-%	M=Vus*Ms, pl=q1a, pr=s;
-%	M=Vub*Mb, pl=q1a, pr=b;
-%	M=Vcd*0,  pl=q2a, pr=d;
-%	M=Vcs*Ms, pl=q2a, pr=s;
-%	M=Vcb*Mb, pl=q2a, pr=b;
-%	M=Vtd*0,  pl=q3a, pr=d;
-%	M=Vts*Ms, pl=q3a, pr=s;
+	M=Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
+	M=Vus*Ms, pl=q1a, pr=s;
+	M=Vub*Mb, pl=q1a, pr=b;
+	M=Vcd*0,  pl=q2a, pr=d;
+	M=Vcs*Ms, pl=q2a, pr=s;
+	M=Vcb*Mb, pl=q2a, pr=b;
+	M=Vtd*0,  pl=q3a, pr=d;
+	M=Vts*Ms, pl=q3a, pr=s;
 	M=Vtb*Mb, pl=q3a, pr=b.
 
 
-%lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph1 
-%		+ anti(pr)*(1-g5)/2*i*pl*tau2*ph1 ) 
-% where
-%	M=0 ,  pl=q1a, pr=u;
-%	M=Mc,  pl=q2a, pr=c;
-%	M=Mtop,pl=q3a, pr=t.
+lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph1 
+		+ anti(pr)*(1-g5)/2*i*pl*tau2*ph1 ) 
+ where
+	M=0 ,  pl=q1a, pr=u;
+	M=Mc,  pl=q2a, pr=c;
+	M=Mtop,pl=q3a, pr=t.
 
-%lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*Ph1 )
-%    where
-%	M=Mm,  pl=l2,  pr=e2;
-%	M=Mt,  pl=l3,  pr=e3.
+lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*Ph1 )
+    where
+	M=Mm,  pl=l2,  pr=e2;
+	M=Mt,  pl=l3,  pr=e3.
 %%%%%%%%%%%%
+%parameter tanbeta =sb/cb: 'tan(beta)'.
+
+/*parameter zetau = tanbeta**(-1): 'zetau',
+          zetad = -tanbeta: 'zetad',
+          zetal=-tanbeta: 'zetal'. */
+
+parameter zetau = cb/sb: 'zetau',
+          zetad = -sb/cb: 'zetad',
+          zetal = -sb/cb: 'zetal'. 
+
+
+let l13={n1,zetal*e1}, L13={N1,zetal*E1}.
+let l23={n2,zetal*e2}, L23={N2,zetal*E2}.
+let l33={n3,zetal*e3}, L33={N3,zetal*E3}. 
+
+let q1a3={zetau*u,zetad*(Vud*d+Vus*s+Vub*b)}, Q1a3={zetau*U,zetad*(Vud*D+Vus*S+Vub*B)}.
+let q2a3={zetau*c,zetad*(Vcd*d+Vcs*s+Vcb*b)}, Q2a3={zetau*C,zetad*(Vcd*D+Vcs*S+Vcb*B)}. 
+let q3a3={zetau*t,zetad*(Vtd*d+Vts*s+Vtb*b)}, Q3a3={zetau*T,zetad*(Vtd*D+Vts*S+Vtb*B)}.
+
+lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph2 + anti(pr)*(1-g5)/2*pl*Ph2 )
+    where
+	M=Vud*0,  pl=q1a3, pr=d;          % 0 stands for Md 
+	M=Vus*Ms, pl=q1a3, pr=s;
+	M=Vub*Mb, pl=q1a3, pr=b;
+	M=Vcd*0,  pl=q2a3, pr=d;
+	M=Vcs*Ms, pl=q2a3, pr=s;
+	M=Vcb*Mb, pl=q2a3, pr=b;
+	M=Vtd*0,  pl=q3a3, pr=d;
+	M=Vts*Ms, pl=q3a3, pr=s;
+	M=Vtb*Mb, pl=q3a3, pr=b.
+
+
+lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph2 
+		+ anti(pr)*(1-g5)/2*i*pl*tau2*ph2 ) 
+ where
+	M=0 ,  pl=q1a3, pr=u;
+	M=Mc,  pl=q2a3, pr=c;
+	M=Mtop,pl=q3a3, pr=t.
+
+lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph2 + anti(pr)*(1-g5)/2*pl*Ph2 )
+    where
+	M=Mm,  pl=l23,  pr=e2;
+	M=Mt,  pl=l33,  pr=e3.
+
+%%%%%%%%%%%%%%
 lterm -i*GG*f_SU3*ccghost(G)*G^mu*deriv^mu*ghost(G).
 lterm  -1/2*(deriv*G)**2.
 
