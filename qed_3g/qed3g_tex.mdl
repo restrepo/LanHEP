@@ -1,0 +1,13 @@
+SetTexName([e1=e,E1='\\bar{e}']).
+SetTexName([e=e,E='\\bar{e}']).
+SetTexName(['e1.c'='e^c','E1.c'='\\bar{e}^c']).
+SetTexName(['e.c'='e^c','E.c'='\\bar{e}^c']).
+SetTexName([e2='\\mu',E2='\\bar{\\mu}']).
+SetTexName([e3='\\tau',E3='\\bar{\\tau}']).
+SetTexName([m='\\mu',M='\\bar{\\mu}']).
+SetTexName([l='\\tau',L='\\bar{\\tau}']).
+
+SetTexName([EE=e]).
+
+SetTexName([Me='M_e', Mm='M_\\mu', Mt='M_\\tau']).
+
