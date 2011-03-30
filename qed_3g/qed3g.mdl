@@ -1,0 +1,52 @@
+model 'QED: e, mu tau'/1.
+
+use qed3g_tex.
+
+prtcprop pdg.
+
+%prtc1.mdl is one of the output files of LanHEP. To make
+% it compatible with CalcHEP we need to change their format
+% to include the PDG particle number in the third column
+ 
+prtcformat fullname:'  Full Name  ',
+           name:' P ',
+           aname:' aP ',
+           pdg:' number ',
+           spin2, mass, width, color, aux,
+           texname:'>  LaTeX P name  <',
+           atexname:'>  LaTeX aP name < '.
+
+parameter  EE  = 0.31333 : 'Electromagnetic coupling constant (<->1/128)'.
+
+vector  
+	A/A: (photon, gauge).
+
+spinor 		e1:(electron),
+		e2:(muon, mass Mm  = 0.1057),
+		e3:('tau-lepton', mass Mt  = 1.777).
+
+% fermion interaction with gauge fields
+
+lterm  	anti(psi)*gamma*(i*deriv - EE*A)*psi
+		where 
+			psi=e1;
+			psi=e2;
+			psi=e3.
+
+% gauge bosons Lagrangian
+
+lterm -F**2/4   where 
+	F=deriv^mu*A^nu-deriv^nu*A^mu.
+
+%set PDG particle numbers:
+
+prtcprop pdg:(A=22,e1=11, e2=13, e3=15).
+
+
+SetEM(A,EE). %check charge conservation
+CheckHerm.
+
+
+
+
+
