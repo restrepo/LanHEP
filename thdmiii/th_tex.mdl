@@ -35,7 +35,7 @@ SetTexName([Me='M_e', Mm='M_\\mu', Mt='M_\\tau', Ms='M_s',
 		Mc='M_c', Mb=M_b, Mtop=M_t, wtop='\\Gamma_t',
 		wW='\\Gamma_W', wZ='\\Gamma_Z', MW=M_W, MZ=M_Z]).
 
-SetTexName([sb='s_\\beta', cb='c_\\beta', sa='s_\\alpha', ca='c_\\alpha' ,mu12='\\mu_{12}^2']).
+SetTexName([sb='s_\\beta', cb='c_\\beta', sa='s_\\alpha', ca='c_\\alpha' ,mu12='\\mu_{12}^2', m22='M_{22}^2', lambda2='\\Lambda_2', lambda7='\\Lambda_7']).
 
 SetTexName([Mh='M_h', MHH='M_H', MA0='M_{A^0}', MHc='M_{H^\\pm}']).
 SetTexName([sasb='s_{\\alpha + \\beta}', sarb='s_{\\alpha - \\beta}', casb='c_{\\alpha + \\beta}', carb='c_{\\alpha - \\beta}']).
