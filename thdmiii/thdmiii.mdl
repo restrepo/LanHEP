@@ -1,6 +1,6 @@
-%
-% THDM III Model - t'Hooft-Feynman gauge.
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%Two Higgs Doublets Models-type III-higgs basis- t'Hooft-feynman gauge.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 model 'THDM III (Feyn. gauge)'/1.
 
@@ -139,6 +139,7 @@ lterm  GG*anti(psi)*lambda*gamma*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
 %%%%%%%% scalar sector
+
 scalar 
      h/h:(Higgs, mass Mh = 130, width wh = 1.461),
      H/H: ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0),
@@ -147,15 +148,15 @@ scalar
 
 %%%%%%%%%% parametros del modelo de dos dobletes %%%%%%%%%%%%%
 
-
-let  vvev=Sqrt2*MW*SW/EE.
+let  vvev=2*MW*SW/EE.
 
 parameter  sb=0.8:'Sinus beta', cb=sqrt(1-sb**2):'Cosine beta'.
 
-let vev1 = vvev*cb, vev2 = vvev*sb.
+let vev1 = vvev*cb.
 
 parameter  sa = -0.5:'Sinus alpha', ca = sqrt(1-sa**2):'Cosine alpha',
-	   mu12 = 10000:'minimal condition'.
+	    m22 = 10000:'minimal condition',
+	   lambda2 = 10:'potencial-2', lambda7 = 11:'potential-7'.
 
 parameter  sasb = sa*cb + ca*sb:'sin(a+b)', sarb = sa*cb - ca*sb:'sin(a-b)', 
 	   casb = ca*cb - sa*sb:'cos(a+b)', carb = ca*cb + sa*sb:'cos(a-b)'.
@@ -173,48 +174,68 @@ parameter  rD33 = 11 : 'Matrix FCNC Down',
 	   rU33 = 7 : 'Matrix FCNC Up'.
 
 %%%%%%%%%%%%%%%%%%%%%%%%% dobletes%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-let ph1 = { -i*(cb*'W+.f'-sb*'H+'),vev(vev1)+((ca*H-sa*h)+i*(cb*'Z.f'-sb*A0))/Sqrt2 },
-    Ph1 = { i*(cb*'W-.f'-sb*'H-'),vev(vev1)+((ca*H-sa*h)-i*(cb*'Z.f'-sb*A0))/Sqrt2 }.
 
-let ph2 = { -i*(sb*'W+.f'+cb*'H+'),vev(vev2)+((sa*H+ca*h)+i*(cb*A0+sb*'Z.f'))/Sqrt2 },
-    Ph2 = { i*(sb*'W-.f'+cb*'H-'),vev(vev2)+((sa*H+ca*h)-i*(cb*A0+sb*'Z.f'))/Sqrt2 }.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+let ph1 = { -i*'W+.f', (vev(vev1)+ carb*H - sarb*h + i*'Z.f')/Sqrt2 },
+    Ph1 = { i*'W-.f', (vev(vev1) + carb*H - sarb*h - i*'Z.f')/Sqrt2 }.
+
+let ph2 = { -i*'H+', (sarb*H + carb*h + i*A0)/Sqrt2 },
+    Ph2 = { i*'H-', (sarb*H + carb*h - i*A0)/Sqrt2 }.
+
 %%%%%%%%%%%%%%%%%%%%definicion parametros del potencial escalar%%%%%%%%%%%%%%%%%%%%%%%%%
 
-let lambda1 = -mu12*sb/cb**3/4/vvev**2 + (Mh**2*sa**2+MH0**2*ca**2)/vvev**2/cb**2/4.
+let lambda1 = (carb**2*MHH**2+sarb**2*Mh**2)/vev1**2.  
 
-let lambda2 = -mu12*cb/sb**3/4/vvev**2 + (Mh**2*ca**2+MH0**2*sa**2)/vvev**2/sb**2/4.
+let lambda3 = (2*MHc**2 - 2*m22)/vev1**2.
 
-let lambda3 = -mu12/cb/sb/vvev**2/2 + MHc**2/vvev**2-sa*ca*(Mh**2-MH0**2)/vvev**2/cb/sb/2.
+let lambda4 = (MA0**2 - 2*MHc**2 + sarb**2*MHH**2 + carb**2*Mh**2)/vev1**2.
 
-let lambda4 = mu12/cb/sb/vvev**2/2 + (MA0**2-2*MHc**2)/vvev**2/2.
+let lambda5 = (sarb**2*MHH**2 - MA0**2 + carb**2*Mh**2)/vev1**2.
 
-let lambda5 = mu12/cb/sb/vvev**2/2 - MA0**2/vvev**2/2.
+let lambda6 = ((MHH**2 - Mh**2)*(s2a*c2b - c2a*s2b))/(2*vev1**2).
 
-let m1 = -mu12*sb/cb+2*lambda1*vev1**2+(lambda3+lambda4+lambda5)*vev2**2.
+let m11 = (-carb**2*MHH**2 - sarb**2*Mh**2)/2.
 
-let m2 = -mu12*cb/sb+2*lambda2*vev2**2+(lambda3+lambda4+lambda5)*vev1**2.
+let m21 = ((MHH**2 - Mh**2)*(s2a*c2b - c2a*s2b))/4.
 
-%%%%%%%%%%%%%%%%% Potencial scalar (lagrangiano)%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Potencial scalar %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-lterm m1*Ph1*ph1+m2*Ph2*ph2+mu12*(Ph1*ph2+ph1*Ph2).
+lterm m11*Ph1*ph1 + m22*Ph2*ph2 - m21*(Ph1*ph2+ph1*Ph2).
 
-lterm -lambda1*(Ph1*ph1)**2.
+lterm lambda1*(Ph1*ph1)**2/2.
 
-lterm -lambda2*(Ph2*ph2)**2.
+lterm lambda2*(Ph2*ph2)**2/2.
 
-lterm -lambda3*(Ph1*ph1*Ph2*ph2).
+lterm lambda3*(Ph1*ph1*Ph2*ph2).
 
-lterm -lambda4*(Ph1*ph2*Ph2*ph1).
+lterm lambda4*(Ph1*ph2*Ph2*ph1).
 
-lterm -lambda5*(Ph1*ph2*Ph1*ph2+Ph2*ph1*Ph2*ph1)/2.
+lterm lambda5*(Ph1*ph2*Ph1*ph2 + Ph2*ph1*Ph2*ph1)/2.
 
-%%%%%%%%%%%%yukawa lagrangian for third family%%%%%%%%%%%%%%%%%%
+lterm lambda6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
 
+lterm lambda7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
 
-prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, 'A0'=35, H=36, 'H+'=37).
+%%%%%%%%%%%%%%%%%% kinetic terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%Yukawa Tipo III
+let Dph1^mu^a = (deriv^mu+i*g1/2*B1^mu)*ph1^a +
+	 i*g/2*taupm^a^b^c*WW^mu^c*ph1^b.
+
+let DPh1^mu^a = (deriv^mu-i*g1/2*B1^mu)*Ph1^a 
+	-i*g/2*taupm^a^b^c*{'W-'^mu,W3^mu,'W+'^mu}^c*Ph1^b.
+
+lterm DPh1*Dph1. 
+
+let Dph2^mu^a = (deriv^mu+i*g1/2*B1^mu)*ph2^a +
+	 i*g/2*taupm^a^b^c*WW^mu^c*ph2^b.
+
+let DPh2^mu^a = (deriv^mu-i*g1/2*B1^mu)*Ph2^a 
+	-i*g/2*taupm^a^b^c*{'W-'^mu,W3^mu,'W+'^mu}^c*Ph2^b.
+
+lterm DPh2*Dph2. 
+
+%%%%%%%%%%%% yukawa coupling%%%%%%%%%%%%%%%%%%
+
+%%%Yukawa SM
 lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*Ph1 )
     where
 	M=Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
@@ -242,9 +263,9 @@ lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*Ph1 )
 %%%%%%%%%%%%
 %parameter tanbeta =sb/cb: 'tan(beta)'.
 
-/*parameter zetau = tanbeta**(-1): 'zetau',
-          zetad = -tanbeta: 'zetad',
-          zetal=-tanbeta: 'zetal'. */
+%parameter zetau = tanbeta**(-1): 'zetau',
+ %         zetad = -tanbeta: 'zetad',
+  %        zetal=-tanbeta: 'zetal'. */
 
 parameter zetau = cb/sb: 'zetau',
           zetad = -sb/cb: 'zetad',
@@ -308,6 +329,8 @@ lterm i*EE*MW/2/CW/SW*(
 			+2*CW*SW*'W-.C'*'A.c') -
 	'W-.f'*('W+.C'*'Z.c'*(1-2*SW**2)+'W+.c'*'Z.C'
 			+2*CW*SW*'W+.C'*'A.c')).
+
+prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, 'A0'=35, H=36, 'H+'=37).
 
 SetAngle(1-SW**2=CW**2).
 SetAngle(1-sa**2=ca**2).
