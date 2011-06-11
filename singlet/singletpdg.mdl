@@ -1,6 +1,7 @@
 %
-% Standard Model - unitary and t'Hooft-Feynman gauges.
+% Standard Model + singlet scalar - unitary and t'Hooft-Feynman gauges.
 % Author Jose David Ruiz jotadram6 AT gmail.com
+% Based in LanHEP file for Standard Model
 %
 
 keys gauge_fixing=unitary.
