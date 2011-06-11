@@ -1,0 +1,332 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     11637,        323]
+NotebookOptionsPosition[     11151,        303]
+NotebookOutlinePosition[     11585,        320]
+CellTagsIndexPosition[     11542,        317]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dpR", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "d", "}"}], ",", 
+     RowBox[{"{", "s", "}"}], ",", 
+     RowBox[{"{", "b", "}"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DpL", "=", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"D", ",", "S", ",", "B"}], "}"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   SubscriptBox["V", "CKM"], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["V", "ud"], ",", 
+       SubscriptBox["V", "us"], ",", 
+       SubscriptBox["V", "ub"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["V", "cd"], ",", 
+       SubscriptBox["V", "cs"], ",", 
+       SubscriptBox["V", "cb"]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       SubscriptBox["V", "td"], ",", 
+       SubscriptBox["V", "ts"], ",", 
+       SubscriptBox["V", "tb"]}], "}"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Ud", "=", 
+  RowBox[{
+   SubscriptBox["V", "CKM"], "\[Transpose]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   SubscriptBox["M", "d"], "=", 
+   RowBox[{"(", "\[NoBreak]", GridBox[{
+      {
+       SubscriptBox["m", "d"], "0", "0"},
+      {"0", 
+       SubscriptBox["m", "s"], "0"},
+      {"0", "0", 
+       SubscriptBox["m", "b"]}
+     }], "\[NoBreak]", ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<L=\>\"", ",", 
+   RowBox[{"DpL", ".", "Ud", ".", 
+    SubscriptBox["M", "d"], ".", 
+    RowBox[{"Ud", "\[Transpose]"}], ".", "dpR"}]}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.516716335954041*^9, 3.516716372219544*^9}, {
+  3.51671641580099*^9, 3.516716456528573*^9}, {3.516716539616077*^9, 
+  3.5167165659234324`*^9}, {3.516716669644927*^9, 3.516716678155033*^9}, {
+  3.5167167249526653`*^9, 3.516716729498736*^9}, {3.516716795110125*^9, 
+  3.516716805076624*^9}, {3.516716853595039*^9, 3.516716910026375*^9}, {
+  3.516716965280098*^9, 3.516717001510963*^9}, {3.516717177915374*^9, 
+  3.516717189387602*^9}, {3.516717774020088*^9, 3.516717774817058*^9}, {
+  3.5167180628516073`*^9, 3.516718140579896*^9}, {3.5167186626299267`*^9, 
+  3.5167187858637877`*^9}, {3.51671881898989*^9, 3.5167188208901052`*^9}, {
+  3.516718880749325*^9, 3.516718882921693*^9}, {3.5167189420098*^9, 
+  3.5167189809198914`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["V", "ud"], ",", 
+     SubscriptBox["V", "cd"], ",", 
+     SubscriptBox["V", "td"]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["V", "us"], ",", 
+     SubscriptBox["V", "cs"], ",", 
+     SubscriptBox["V", "ts"]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     SubscriptBox["V", "ub"], ",", 
+     SubscriptBox["V", "cb"], ",", 
+     SubscriptBox["V", "tb"]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.516718985514475*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"L=\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"b", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["m", "s"], " ", 
+          SubscriptBox["V", "cb"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "cb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "cd"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "cs"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "b"], " ", 
+          SubscriptBox["V", "tb"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "tb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "td"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "ts"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "d"], " ", 
+          SubscriptBox["V", "ub"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "ub"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "ud"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "us"]}]}], ")"}]}]}], ")"}]}], "+", 
+      RowBox[{"d", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["m", "s"], " ", 
+          SubscriptBox["V", "cd"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "cb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "cd"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "cs"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "b"], " ", 
+          SubscriptBox["V", "td"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "tb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "td"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "ts"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "d"], " ", 
+          SubscriptBox["V", "ud"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "ub"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "ud"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "us"]}]}], ")"}]}]}], ")"}]}], "+", 
+      RowBox[{"s", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["m", "s"], " ", 
+          SubscriptBox["V", "cs"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "cb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "cd"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "cs"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "b"], " ", 
+          SubscriptBox["V", "ts"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "tb"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "td"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "ts"]}]}], ")"}]}], "+", 
+         RowBox[{
+          SubscriptBox["m", "d"], " ", 
+          SubscriptBox["V", "us"], " ", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"B", " ", 
+             SubscriptBox["V", "ub"]}], "+", 
+            RowBox[{"D", " ", 
+             SubscriptBox["V", "ud"]}], "+", 
+            RowBox[{"S", " ", 
+             SubscriptBox["V", "us"]}]}], ")"}]}]}], ")"}]}]}], "}"}], "}"}]}],
+  SequenceForm[
+  "L=", {{$CellContext`b (
+       Subscript[$CellContext`m, $CellContext`s] 
+        Subscript[$CellContext`V, $CellContext`cb] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`cb] + 
+         D Subscript[$CellContext`V, $CellContext`cd] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`cs]) + 
+       Subscript[$CellContext`m, $CellContext`b] 
+        Subscript[$CellContext`V, $CellContext`tb] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`tb] + 
+         D Subscript[$CellContext`V, $CellContext`td] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`ts]) + 
+       Subscript[$CellContext`m, $CellContext`d] 
+        Subscript[$CellContext`V, $CellContext`ub] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`ub] + 
+         D Subscript[$CellContext`V, $CellContext`ud] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`us])) + $CellContext`d (
+       Subscript[$CellContext`m, $CellContext`s] 
+        Subscript[$CellContext`V, $CellContext`cd] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`cb] + 
+         D Subscript[$CellContext`V, $CellContext`cd] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`cs]) + 
+       Subscript[$CellContext`m, $CellContext`b] 
+        Subscript[$CellContext`V, $CellContext`td] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`tb] + 
+         D Subscript[$CellContext`V, $CellContext`td] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`ts]) + 
+       Subscript[$CellContext`m, $CellContext`d] 
+        Subscript[$CellContext`V, $CellContext`ud] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`ub] + 
+         D Subscript[$CellContext`V, $CellContext`ud] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`us])) + $CellContext`s (
+       Subscript[$CellContext`m, $CellContext`s] 
+        Subscript[$CellContext`V, $CellContext`cs] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`cb] + 
+         D Subscript[$CellContext`V, $CellContext`cd] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`cs]) + 
+       Subscript[$CellContext`m, $CellContext`b] 
+        Subscript[$CellContext`V, $CellContext`ts] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`tb] + 
+         D Subscript[$CellContext`V, $CellContext`td] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`ts]) + 
+       Subscript[$CellContext`m, $CellContext`d] 
+        Subscript[$CellContext`V, $CellContext`us] ($CellContext`B 
+          Subscript[$CellContext`V, $CellContext`ub] + 
+         D Subscript[$CellContext`V, $CellContext`ud] + $CellContext`S 
+          Subscript[$CellContext`V, $CellContext`us]))}}],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.516718808663862*^9, 3.516718824008891*^9}, 
+   3.516718985537395*^9}]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"dR", "=", 
+   RowBox[{
+    RowBox[{"Ud", "\[Transpose]"}], ".", "dpR"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DL", "=", 
+   RowBox[{"DpL", ".", "Ud"}]}], ";", " ", 
+  RowBox[{"(*", " ", 
+   RowBox[{"dL", "=", 
+    RowBox[{
+     RowBox[{"Ud", "\[Transpose]"}], ".", "dpL"}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"UpL", ".", "dpL"}], " ", "\[Rule]", " ", 
+     RowBox[{
+      SuperscriptBox[
+       SubscriptBox["V", "L"], "u"], " ", 
+      SuperscriptBox["Ud", "T"]}]}], ")"}]}]}]}], "Input",
+ CellChangeTimes->{{3.516718176248198*^9, 3.5167181929722147`*^9}, {
+  3.5167182449366302`*^9, 3.516718466218891*^9}, {3.5167185517012453`*^9, 
+  3.516718556004718*^9}, {3.5167188483595133`*^9, 3.516718850515354*^9}, {
+  3.516718926874778*^9, 3.5167189312435837`*^9}},
+ EmphasizeSyntaxErrors->True]
+},
+WindowSize->{1680, 975},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+Magnification:>FEPrivate`If[
+  FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.5, 1.5 Inherited],
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (November 7, 2010)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 2355, 65, 253, "Input"],
+Cell[2937, 89, 536, 18, 43, "Output"],
+Cell[3476, 109, 6755, 163, 88, "Print"]
+}, Open  ]],
+Cell[10246, 275, 901, 26, 98, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
