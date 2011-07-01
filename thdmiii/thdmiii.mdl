@@ -142,8 +142,8 @@ lterm  GG*anti(psi)*lambda*gamma*G*psi where
 
 scalar 
      h/h:(Higgs, mass Mh = 130, width wh = 1.461),
-     H/H: ('H0 Scalar', mass  MH = 125.672590488, width wH = 1.0),
-     A0/A0: ('A0 Scalar', mass MA0 = 125.672590488, width wA0 = 1.0),
+     H/H: ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0),
+     A0/A0: ('A0 Scalar', mass MA0 = 130.672590488, width wA0 = 1.0),
      'H+'/'H-': ('Charged Higgs', mass MHc = 200, width whc = 1.0).
 
 %%%%%%%%%% parametros del modelo de dos dobletes %%%%%%%%%%%%%
@@ -155,8 +155,8 @@ parameter  sb = 0.8:'Sinus beta', cb = sqrt(1-sb**2):'Cosine beta'.
 let vev1 = vvev*cb.
 
 parameter  sa = -0.5:'Sinus alpha', ca = sqrt(1-sa**2):'Cosine alpha',
-	   m22 = 10000:'minimal condition',
-	   lambda2 = 0.5:'potencial-2', lambda7 = 0.2:'potential-7'.
+	   mu22 = 10000:'minimal condition',
+	   Lam2 = 0.5:'potencial-2', Lam7 = 0.2:'potential-7'.
 
 parameter  sbpa = sb*ca + cb*sa:'sin(beta+alpha)', sbma = sb*ca - cb*sa:'sin(beta-alpha)', 
 	   cbpa = cb*ca - sb*sa:'cos(beta+alpha)', cbma = cb*ca + sb*sa:'cos(beta-alpha)'.
@@ -179,37 +179,37 @@ let ph2 = { -i*'H+', (-sbma*H + cbma*h + i*A0)/Sqrt2 },
 %%%%%%%%%%%%%%%%%%%%definicion parametros del potencial escalar%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-let lambda1 = (cbma**2*MH**2+sbma**2*Mh**2)/vev1**2.  
+let Lam1 = (cbma**2*MH0**2+sbma**2*Mh**2)/vev1**2.  
 
-let lambda3 = (2*MHc**2 - 2*m22)/vev1**2.
+let Lam3 = (2*MHc**2 - 2*mu22)/vev1**2.
 
-let lambda4 = (MA0**2 - 2*MHc**2 + sbma**2*MH**2 + cbma**2*Mh**2)/vev1**2.
+let Lam4 = (MA0**2 - 2*MHc**2 + sbma**2*MH0**2 + cbma**2*Mh**2)/vev1**2.
 
-let lambda5 = (sbma**2*MH**2 - MA0**2 + cbma**2*Mh**2)/vev1**2.
+let Lam5 = (sbma**2*MH0**2 - MA0**2 + cbma**2*Mh**2)/vev1**2.
 
-let lambda6 = -((MH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/(2*vev1**2).
+let Lam6 = -((MH0**2 - Mh**2)*(s2b*c2a - c2b*s2a))/(2*vev1**2).
 
-let m11 = (-cbma**2*MH**2 - sbma**2*Mh**2)/2.
+let m11 = (-cbma**2*MH0**2 - sbma**2*Mh**2)/2.
 
-let m12 = -((MH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/4.
+let m12 = -((MH0**2 - Mh**2)*(s2b*c2a - c2b*s2a))/4.
 
 %%%%%%%%%%%%%%%%% Potencial scalar %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-lterm -m11*Ph1*ph1 - m22*Ph2*ph2 + m12*(Ph1*ph2+ph1*Ph2).
+lterm -m11*Ph1*ph1 - mu22*Ph2*ph2 + m12*(Ph1*ph2+ph1*Ph2).
 
-lterm -lambda1*(Ph1*ph1)**2/2.
+lterm -Lam1*(Ph1*ph1)**2/2.
 
-lterm -lambda2*(Ph2*ph2)**2/2.
+lterm -Lam2*(Ph2*ph2)**2/2.
 
-lterm -lambda3*(Ph1*ph1*Ph2*ph2).
+lterm -Lam3*(Ph1*ph1*Ph2*ph2).
 
-lterm -lambda4*(Ph1*ph2*Ph2*ph1).
+lterm -Lam4*(Ph1*ph2*Ph2*ph1).
 
-lterm -lambda5*(Ph1*ph2*Ph1*ph2 + Ph2*ph1*Ph2*ph1)/2.
+lterm -Lam5*(Ph1*ph2*Ph1*ph2 + Ph2*ph1*Ph2*ph1)/2.
 
-lterm -lambda6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
+lterm -Lam6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
 
-lterm -lambda7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
+lterm -Lam7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
 
 %%%%%%%%%%%%%%%%%% kinetic terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -256,12 +256,11 @@ lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj)
 	M=Mm,  pl=l2,  pr=e2;
 	M=Mt,  pl=l3,  pr=e3.
 
-
 %hipotesis de alineamiento%
 
-parameter sbu = 10:'Sinus betau', cbu = sqrt(1-sbu**2):'Cosine betau'.
-parameter sbd = 5:'Sinus betad', cbd = sqrt(1-sbd**2):'Cosine betad'.
-parameter sbl = 3:'Sinus betal', cbl = sqrt(1-sbl**2):'Cosine betal'.
+parameter sbu = 0.98:'Sinus betau', cbu = sqrt(1-sbu**2):'Cosine betau'.
+parameter sbd = 0.98:'Sinus betad', cbd = sqrt(1-sbd**2):'Cosine betad'.
+parameter sbl = 0.98:'Sinus betal', cbl = sqrt(1-sbl**2):'Cosine betal'.
 parameter cotu = cbu/sbu: 'cotangente betau',
           tand = sbd/cbd: 'tangente betad',
           tanl = sbl/cbl: 'tangente betal'. 
@@ -299,73 +298,7 @@ lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
 	M=-tanl*Mm,  pl=l2,  pr=e2;
 	M=-tanl*Mt,  pl=l3,  pr=e3.
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj )
-    where
-	M=Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
-	M=Vus*Ms, pl=q1a, pr=s;
-	M=Vub*Mb, pl=q1a, pr=b;
-	M=Vcd*0,  pl=q2a, pr=d;
-	M=Vcs*Ms, pl=q2a, pr=s;
-	M=Vcb*Mb, pl=q2a, pr=b;
-	M=Vtd*0,  pl=q3a, pr=d;
-	M=Vts*Ms, pl=q3a, pr=s;
-	M=Vtb*Mb, pl=q3a, pr=b.
 
-
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph1 
-		+ AddHermConj) 
- where
-	M=0 ,  pl=q1a, pr=u;
-	M=Mc,  pl=q2a, pr=c;
-	M=Mtop,pl=q3a, pr=t.
-
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj)
-    where
-	M=Mm,  pl=l2,  pr=e2;
-	M=Mt,  pl=l3,  pr=e3.
-
-
-%hipotesis de alineamiento%
-
-parameter sbu = 10:'Sinus betau', cbu = sqrt(1-sbu**2):'Cosine betau'.
-parameter sbd = 5:'Sinus betad', cbd = sqrt(1-sbd**2):'Cosine betad'.
-parameter sbl = 3:'Sinus betal', cbl = sqrt(1-sbl**2):'Cosine betal'.
-parameter cotu = cbu/sbu: 'cotangente betau',
-          tand = sbd/cbd: 'tangente betad',
-          tanl = sbl/cbl: 'tangente betal'. 
-
-%let l13={n1,-tanl*e1}, L13={N1,-tanl*E1}.
-%let l23={n2,-tanl*e2}, L23={N2,-tanl*E2}.
-%let l33={n3,-tanl*e3}, L33={N3,-tanl*E3}. 
-
-%let q1a3={cotu*u,(Vud*d+Vus*s+Vub*b)}, Q1a3={cotu*U,-tand*(Vud*D+Vus*S+Vub*B)}.
-%let q2a3={cotu*c,-tand*(Vcd*d+Vcs*s+Vcb*b)}, Q2a3={cotu*C,-tand*(Vcd*D+Vcs*S+Vcb*B)}. 
-%let q3a3={cotu*t,-tand*(Vtd*d+Vts*s+Vtb*b)}, Q3a3={cotu*T,-tand*(Vtd*D+Vts*S+Vtb*B)}.
-
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
-    where
-	M=-tand*Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
-	M=-tand*Vus*Ms, pl=q1a, pr=s;
-	M=-tand*Vub*Mb, pl=q1a, pr=b;
-	M=-tand*Vcd*0,  pl=q2a, pr=d;
-	M=-tand*Vcs*Ms, pl=q2a, pr=s;
-	M=-tand*Vcb*Mb, pl=q2a, pr=b;
-	M=-tand*Vtd*0,  pl=q3a, pr=d;
-	M=-tand*Vts*Ms, pl=q3a, pr=s;
-	M=-tand*Vtb*Mb, pl=q3a, pr=b.
-
-
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph2 
-		+ AddHermConj) 
- where
-	M=cotu*0 ,  pl=q1a, pr=u;
-	M=cotu*Mc,  pl=q2a, pr=c;
-	M=cotu*Mtop,pl=q3a, pr=t.
-	
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
-    where
-	M=-tanl*Mm,  pl=l2,  pr=e2;
-	M=-tanl*Mt,  pl=l3,  pr=e3.
 
 
 
