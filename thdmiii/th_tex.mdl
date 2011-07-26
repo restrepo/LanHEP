@@ -31,14 +31,13 @@ SetTexName(['H+'='H^+', 'H-'='H^-', 'A0'='A^0']).
 
 SetTexName([EE=e, GG='g_s', SW='s_w', CW='c_w', MZ='M_Z']).
 
-SetTexName([Me='M_e', Mm='M_\\mu', Mt='M_\\tau', Ms='M_s',
+SetTexName([Me='M_e', Mup='M_u', Md='M_d', Mm='M_\\mu', Mt='M_\\tau', Ms='M_s',
 		Mc='M_c', Mb=M_b, Mtop=M_t, wtop='\\Gamma_t',
 		wW='\\Gamma_W', wZ='\\Gamma_Z', MW=M_W, MZ=M_Z]).
 
+SetTexName([sb='s_\\beta', cb='c_\\beta', sa='s_\\alpha', ca='c_\\alpha' ,mu12='\\mu_{12}^2', md2='M_{22}^2', la2='\\Lambda_2', la7='\\Lambda_7']).
 
-SetTexName([sb='s_\\beta', cb='c_\\beta', sa='s_\\alpha', ca='c_\\alpha' ,mu12='\\mu_{12}^2', m22='M_{22}^2', lambda2='\\Lambda_2', lambda7='\\Lambda_7']).
-
-SetTexName([Mh='M_h', MH='M_H', MA0='M_{A^0}', MHc='M_{H^\\pm}']).
+SetTexName([Mh='M_h', MHH='M_H', MA0='M_{A^0}', MHc='M_{H^\\pm}']).
 SetTexName([sbpa='s_{\\beta + \\alpha}', sbma='s_{\\beta - \\alpha}', cbpa='c_{\\beta + \\alpha}', cbma='c_{\\beta - \\alpha}']).
 SetTexName([s2b='s_{2\\beta}', s2a='s_{2\\alpha}', c2b='c_{2\\beta}', c2a='c_{2\\alpha}']).
 SetTexName([cotu='cot_{\\beta u}', tand='tan_{\\beta d}', tanl='tan_{\\beta l}']).

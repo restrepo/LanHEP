@@ -2,7 +2,7 @@
 %%Two Higgs Doublets Models-type III-higgs basis- t'Hooft-feynman gauge.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-model 'THDM III (Feyn. gauge)'/1.
+model 'thdm III(Higgs-basis)'/1.
 
 option ReduceGamma5=0.
 let g5=gamma5.
@@ -13,7 +13,7 @@ prtcprop pdg.
 %prtc#.mdl is one of the output files of LanHEP. To make
 % it compatible with CalcHEP we need to change their format
 % to include the PDG particle number as the third column
- 
+
 prtcformat fullname:'  Full Name  ',
            name:' P ',
            aname:' aP ',
@@ -21,6 +21,8 @@ prtcformat fullname:'  Full Name  ',
            spin2, mass, width, color, aux,
            texname:'>  LaTeX P name  <',
            atexname:'>  LaTeX aP name < '.
+
+%%%%%%%%%%%%%%%%%%%%%%%% SM parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 parameter  EE  = 0.31333 : 'Electromagnetic coupling constant (<->1/128)',
 	   GG  = 1.117   : 'Strong coupling constant (Z point)  (PDG-94)',
@@ -47,23 +49,36 @@ parameter  Vud = c12*c13 		: 'C-K-M matrix element',
 
 OrthMatrix( { {Vud,Vus,Vub}, {Vcd,Vcs,Vcb}, {Vtd,Vts,Vtb}} ).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% gauge particles %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 vector  
 	A/A: (photon, gauge),
 	Z/Z:('Z boson', mass MZ = 91.187, width wZ = 2.502, gauge),
 	G/G: (gluon, color c8, gauge),
 	'W+'/'W-': ('W boson', mass MW = MZ*CW, width wW = 2.094, gauge).
 
-spinor 		n1:(neutrino,left), 	   e1:(electron),
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% spinores %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+spinor 		n1:(neutrino,left), 	   e1:(electron, mass Me = 0.0005),
 		n2:('mu-neutrino',left),   e2:(muon, mass Mm  = 0.1057),
 		n3:('tau-neutrino',left),  e3:('tau-lepton', mass Mt  = 1.777).
 
-spinor		u:('u-quark',color c3),
-		d:('d-quark',color c3),
+spinor		u:('u-quark',color c3, mass Mup = 0.0017),
+		d:('d-quark',color c3, mass Md = 0.0041),
 		c:('c-quark',color c3, mass Mc  = 1.300),
 		s:('s-quark',color c3, mass Ms = 0.200),
 		t:('t-quark',color c3, mass Mtop = 170, width wtop = 1.442),
 		b:('b-quark',color c3, mass Mb =  4.300 ).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% scalars %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+scalar h/h: ('SM Higgs', mass Mh=160, width wh=1.461),
+       H/H: ('heavy Higgs', mass MHH=210, width wHH=1.0),
+       A0/A0: ('cp-odd Higgs', mass MA0=220, width wA0=1.0),
+       'H+'/'H-': ('charged Higgs', mass MHc=205, width wHc=1.0).
+
+%%%%%%%%%%%%%%%%%%%%%%%% fermions doblets %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
 let l1={n1,e1}, L1={N1,E1}.
 let l2={n2,e2}, L2={N2,E2}.
 let l3={n3,e3}, L3={N3,E3}.
@@ -72,10 +87,10 @@ let q1={u,d}, Q1={U,D}, q1a={u,Vud*d+Vus*s+Vub*b}, Q1a={U,Vud*D+Vus*S+Vub*B}.
 let q2={c,s}, Q2={C,S}, q2a={c,Vcd*d+Vcs*s+Vcb*b}, Q2a={C,Vcd*D+Vcs*S+Vcb*B}. 
 let q3={t,b}, Q3={T,B}, q3a={t,Vtd*d+Vts*s+Vtb*b}, Q3a={T,Vtd*D+Vts*S+Vtb*B}.
 
+%%%%%%%%%%%%%%%%%%%%%%%% electrodebil interaction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 let B1= -SW*Z+CW*A, W3=CW*Z+SW*A, W1=('W+'+'W-')/Sqrt2,
 	 W2 = i*('W+'-'W-')/Sqrt2.
-
 
 let gh1 = ('W+.c'+'W-.c')/Sqrt2, gh2= i*('W+.c'-'W-.c')/Sqrt2,
 		gh3= CW*'Z.c'+SW*'A.c', gh={gh1,gh2,gh3}.
@@ -87,12 +102,7 @@ let WW1 = {W1,  W2 , W3}, WW = {'W+',W3,'W-'}.
 
 let g=EE/SW, g1=EE/CW.
 
-
-
-
-% Self-interaction of gauge bosons
-
-
+%%%%%%%%%%%%%%%%% Self-interaction of gauge bosons %%%%%%%%%%%%%%%%%%%%%%%%
 
 lterm -F**2/4   where 
 	F=deriv^mu*B1^nu-deriv^nu*B1^mu.
@@ -101,13 +111,9 @@ lterm -F**2/4  where
 	F=deriv^mu*G^nu^a-deriv^nu*G^mu^a+i*GG*f_SU3^a^b^c*G^mu^b*G^nu^c.
 
 lterm -F**2/4  where
-F=deriv^mu*WW1^nu^a-deriv^nu*WW1^mu^a -g*eps^a^b^c*WW1^mu^b*WW1^nu^c.
+        F=deriv^mu*WW1^nu^a-deriv^nu*WW1^mu^a -g*eps^a^b^c*WW1^mu^b*WW1^nu^c.
 
-
-
-
-% left fermion interaction with gauge fields
-
+%%%%%%%%%%%%%%%%%% left fermion interaction with gauge fields %%%%%%%%%%%%%%%%%%
 
 lterm  	anti(psi)*gamma*(1-g5)/2*(i*deriv-g*taupm*WW/2-Y*g1*B1)*psi
 		where 
@@ -118,7 +124,7 @@ lterm  	anti(psi)*gamma*(1-g5)/2*(i*deriv-g*taupm*WW/2-Y*g1*B1)*psi
 			psi=q2a, Y= 1/6;
 			psi=q3a, Y= 1/6.
 
-% right fermion interaction with gauge fields
+%%%%%%%%%%%%%%%%%% right fermion interaction with gauge fields %%%%%%%%%%%%%%%%%
 
 lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 		where 
@@ -132,21 +138,12 @@ lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 			psi=s, Y= -1/3;
 			psi=b, Y= -1/3.
 
-
-% quark-gluon interaction
+%%%%%%%%%%%%%%%%%%% quark-gluon interaction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 lterm  GG*anti(psi)*lambda*gamma*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
-%%%%%%%% scalar sector
-
-scalar 
-     h/h:(Higgs, mass Mh = 130, width wh = 1.461),
-     H/H: ('H0 Scalar', mass  MH0 = 125.672590488, width wH0 = 1.0),
-     A0/A0: ('A0 Scalar', mass MA0 = 130.672590488, width wA0 = 1.0),
-     'H+'/'H-': ('Charged Higgs', mass MHc = 200, width whc = 1.0).
-
-%%%%%%%%%% parametros del modelo de dos dobletes %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% model parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 let  vvev = 2*MW*SW/EE.
 
@@ -155,8 +152,8 @@ parameter  sb = 0.8:'Sinus beta', cb = sqrt(1-sb**2):'Cosine beta'.
 let vev1 = vvev*cb.
 
 parameter  sa = -0.5:'Sinus alpha', ca = sqrt(1-sa**2):'Cosine alpha',
-	   mu22 = 10000:'minimal condition',
-	   Lam2 = 0.5:'potencial-2', Lam7 = 0.2:'potential-7'.
+	   md2 = 10000:'minimal condition',
+	   la2 = 0.5:'potencial-2', la7 = 0.2:'potential-7'.
 
 parameter  sbpa = sb*ca + cb*sa:'sin(beta+alpha)', sbma = sb*ca - cb*sa:'sin(beta-alpha)', 
 	   cbpa = cb*ca - sb*sa:'cos(beta+alpha)', cbma = cb*ca + sb*sa:'cos(beta-alpha)'.
@@ -169,47 +166,47 @@ parameter s2a=2*sa*ca:'sinus 2alpha'.
 
 parameter c2a=ca**2-sa**2:'coseno 2alpha'.
 
-%%%%%%%%%%%%%%%%%%%%%%%%% dobletes%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% scalar potential parameters %%%%%%%%%%%%%%%%%%%%%%%%%
 
-let ph1 = { -i*'W+.f', (vev(vev1)+ cbma*H + sbma*h + i*'Z.f')/Sqrt2 },
-    Ph1 = { i*'W-.f', (vev(vev1) + cbma*H + sbma*h - i*'Z.f')/Sqrt2 }.
+let la1 = (cbma**2*MHH**2+sbma**2*Mh**2)/vvev**2.  
+
+let la3 = (2*MHc**2 - 2*md2)/vvev**2.
+
+let la4 = (MA0**2 - 2*MHc**2 + sbma**2*MHH**2 + cbma**2*Mh**2)/vvev**2.
+
+let la5 = (sbma**2*MHH**2 - MA0**2 + cbma**2*Mh**2)/vvev**2.
+
+let la6 = -((MHH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/(2*vvev**2).
+
+let m11 = (-cbma**2*MHH**2 - sbma**2*Mh**2)/2.
+
+let m12 = -((MHH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% doublets scalars definition %%%%%%%%%%%%%%%%%%
+
+let ph1 = { -i*'W+.f', (vev(vvev)+ cbma*H + sbma*h + i*'Z.f')/Sqrt2 },
+    Ph1 = { i*'W-.f', (vev(vvev) + cbma*H + sbma*h - i*'Z.f')/Sqrt2 }.
 
 let ph2 = { -i*'H+', (-sbma*H + cbma*h + i*A0)/Sqrt2 },
     Ph2 = { i*'H-', (-sbma*H + cbma*h - i*A0)/Sqrt2 }.
-%%%%%%%%%%%%%%%%%%%%definicion parametros del potencial escalar%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% scalar potential %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-let Lam1 = (cbma**2*MH0**2+sbma**2*Mh**2)/vev1**2.  
+lterm -m11*Ph1*ph1 - md2*Ph2*ph2 + m12*(Ph1*ph2+ph1*Ph2).
 
-let Lam3 = (2*MHc**2 - 2*mu22)/vev1**2.
+lterm -la1*(Ph1*ph1)**2/2.
 
-let Lam4 = (MA0**2 - 2*MHc**2 + sbma**2*MH0**2 + cbma**2*Mh**2)/vev1**2.
+lterm -la2*(Ph2*ph2)**2/2.
 
-let Lam5 = (sbma**2*MH0**2 - MA0**2 + cbma**2*Mh**2)/vev1**2.
+lterm -la3*(Ph1*ph1*Ph2*ph2).
 
-let Lam6 = -((MH0**2 - Mh**2)*(s2b*c2a - c2b*s2a))/(2*vev1**2).
+lterm -la4*(Ph1*ph2*Ph2*ph1).
 
-let m11 = (-cbma**2*MH0**2 - sbma**2*Mh**2)/2.
+lterm -la5*(Ph1*ph2*Ph1*ph2 + Ph2*ph1*Ph2*ph1)/2.
 
-let m12 = -((MH0**2 - Mh**2)*(s2b*c2a - c2b*s2a))/4.
+lterm -la6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
 
-%%%%%%%%%%%%%%%%% Potencial scalar %%%%%%%%%%%%%%%%%%%%%%%%%%
-
-lterm -m11*Ph1*ph1 - mu22*Ph2*ph2 + m12*(Ph1*ph2+ph1*Ph2).
-
-lterm -Lam1*(Ph1*ph1)**2/2.
-
-lterm -Lam2*(Ph2*ph2)**2/2.
-
-lterm -Lam3*(Ph1*ph1*Ph2*ph2).
-
-lterm -Lam4*(Ph1*ph2*Ph2*ph1).
-
-lterm -Lam5*(Ph1*ph2*Ph1*ph2 + Ph2*ph1*Ph2*ph1)/2.
-
-lterm -Lam6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
-
-lterm -Lam7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
+lterm -la7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
 
 %%%%%%%%%%%%%%%%%% kinetic terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -229,34 +226,36 @@ let DPh2^mu^a = (deriv^mu-i*g1/2*B1^mu)*Ph2^a
 
 lterm DPh2*Dph2. 
 
-%%%%%%%%%%%% yukawa coupling%%%%%%%%%%%%%%%%%%
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj )
+%%%%%% yukawa coupling %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj )
     where
-	M=Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
+	M=Vud*Md,  pl=q1a, pr=d;           
 	M=Vus*Ms, pl=q1a, pr=s;
 	M=Vub*Mb, pl=q1a, pr=b;
-	M=Vcd*0,  pl=q2a, pr=d;
+	M=Vcd*Md,  pl=q2a, pr=d;
 	M=Vcs*Ms, pl=q2a, pr=s;
 	M=Vcb*Mb, pl=q2a, pr=b;
-	M=Vtd*0,  pl=q3a, pr=d;
+	M=Vtd*Md,  pl=q3a, pr=d;
 	M=Vts*Ms, pl=q3a, pr=s;
 	M=Vtb*Mb, pl=q3a, pr=b.
 
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph1 
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph1 
 		+ AddHermConj) 
  where
-	M=0 ,  pl=q1a, pr=u;
+	M=Mup, pl=q1a, pr=u;
 	M=Mc,  pl=q2a, pr=c;
 	M=Mtop,pl=q3a, pr=t.
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj)
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj)
     where
+	M=Me,  pl=l1,  pr=e1;
 	M=Mm,  pl=l2,  pr=e2;
 	M=Mt,  pl=l3,  pr=e3.
 
-%hipotesis de alineamiento%
+%%%%%%%%%% aligned %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 parameter sbu = 0.98:'Sinus betau', cbu = sqrt(1-sbu**2):'Cosine betau'.
 parameter sbd = 0.98:'Sinus betad', cbd = sqrt(1-sbd**2):'Cosine betad'.
@@ -269,40 +268,39 @@ parameter cotu = cbu/sbu: 'cotangente betau',
 %let l23={n2,-tanl*e2}, L23={N2,-tanl*E2}.
 %let l33={n3,-tanl*e3}, L33={N3,-tanl*E3}. 
 
-%let q1a3={cotu*u,(Vud*d+Vus*s+Vub*b)}, Q1a3={cotu*U,-tand*(Vud*D+Vus*S+Vub*B)}.
+%let q1a3={cotu*u,-tand*(Vud*d+Vus*s+Vub*b)}, Q1a3={cotu*U,-tand*(Vud*D+Vus*S+Vub*B)}.
 %let q2a3={cotu*c,-tand*(Vcd*d+Vcs*s+Vcb*b)}, Q2a3={cotu*C,-tand*(Vcd*D+Vcs*S+Vcb*B)}. 
 %let q3a3={cotu*t,-tand*(Vtd*d+Vts*s+Vtb*b)}, Q3a3={cotu*T,-tand*(Vtd*D+Vts*S+Vtb*B)}.
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
     where
-	M=-tand*Vud*0,  pl=q1a, pr=d;          % 0 stands for Md 
+	M=-tand*Vud*Md,  pl=q1a, pr=d;          
 	M=-tand*Vus*Ms, pl=q1a, pr=s;
 	M=-tand*Vub*Mb, pl=q1a, pr=b;
-	M=-tand*Vcd*0,  pl=q2a, pr=d;
+	M=-tand*Vcd*Md,  pl=q2a, pr=d;
 	M=-tand*Vcs*Ms, pl=q2a, pr=s;
 	M=-tand*Vcb*Mb, pl=q2a, pr=b;
-	M=-tand*Vtd*0,  pl=q3a, pr=d;
+	M=-tand*Vtd*Md,  pl=q3a, pr=d;
 	M=-tand*Vts*Ms, pl=q3a, pr=s;
 	M=-tand*Vtb*Mb, pl=q3a, pr=b.
 
 
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph2 
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*i*tau2*pr*Ph2 
 		+ AddHermConj) 
  where
-	M=cotu*0 ,  pl=q1a, pr=u;
+	M=cotu*Mup, pl=q1a, pr=u;
 	M=cotu*Mc,  pl=q2a, pr=c;
 	M=cotu*Mtop,pl=q3a, pr=t.
 	
-lterm  -(M*Sqrt2/vev1)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
+lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
     where
+	M=-tanl*Me,  pl=l1,  pr=e1;
 	M=-tanl*Mm,  pl=l2,  pr=e2;
 	M=-tanl*Mt,  pl=l3,  pr=e3.
 
 
+%%%%%%%%%%%%%%%%%%%% ghosts %%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-%%%%%%%%%%%%%%
 lterm -i*GG*f_SU3*ccghost(G)*G^mu*deriv^mu*ghost(G).
 lterm  -1/2*(deriv*G)**2.
 
@@ -318,8 +316,8 @@ lterm  -1/2*(2*(deriv*'W+'+MW*'W+.f')*(deriv*'W-'+MW*'W-.f') +
 	(deriv*Z+MW/CW*'Z.f')**2).
 
 
-lterm -MW*EE/2/SW*((h+i*'Z.f')*('W-.C'*'W+.c' + 'W+.C'*'W-.c')
-    		+h*'Z.C'*'Z.c'/CW**2-2*i*'Z.f'*'W+.C'*'W-.c').
+lterm -MW*EE/2/SW*((H+i*'Z.f')*('W-.C'*'W+.c' + 'W+.C'*'W-.c')
+    		+H*'Z.C'*'Z.c'/CW**2-2*i*'Z.f'*'W+.C'*'W-.c').
 
 lterm i*EE*MW/2/CW/SW*(
 	'W+.f'*('W-.C'*'Z.c'*(1-2*SW**2)+'W-.c'*'Z.C'
@@ -328,7 +326,6 @@ lterm i*EE*MW/2/CW/SW*(
 			+2*CW*SW*'W+.C'*'A.c')).
 
 prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=34, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, 'A0'=35, H=36, 'H+'=37).
-
 
 SetAngle(1-SW**2=CW**2).
 SetAngle(1-sa**2=ca**2).
@@ -345,8 +342,3 @@ SetEM(A,EE).
 option chepLPWidth=1484.
 option SmartAngleComb=1.
 CheckHerm.
-
-
-
-
-
