@@ -1,8 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%Two Higgs Doublets Models-type III-higgs basis- t'Hooft-feynman gauge.
+%%%%%Two Higgs Doublets Models-type III-higgs basis-t'Hooft-feynman gauge.%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-model 'thdm III(Higgs-basis)'/1.
+model 'thdm3(Higgs-basis)'/1.
 
 option ReduceGamma5=0.
 let g5=gamma5.
@@ -26,16 +26,16 @@ prtcformat fullname:'  Full Name  ',
 
 parameter  EE  = 0.31333 : 'Electromagnetic coupling constant (<->1/128)',
 	   GG  = 1.117   : 'Strong coupling constant (Z point)  (PDG-94)',
-	   SW  = 0.4740  : 'sin of the Weinberg angle (PDG-94,"on-shell")',
+	   SW  = 0.4740  : 'Sin of the Weinberg angle (PDG-94,"on-shell")',
            s12 = 0.221   : 'Parameter of C-K-M matrix (PDG-94)',
 	   s23 = 0.040   : 'Parameter of C-K-M matrix (PDG-94)',
            s13 = 0.0035  : 'Parameter of C-K-M matrix (PDG-94)'.
 
-parameter  CW  = sqrt(1-SW**2) : 'cos of the Weinberg angle'.
+parameter  CW  = sqrt(1-SW**2) : 'Cos of the Weinberg angle'.
 
-parameter  c12  = sqrt(1-s12**2) : 	'parameter  of C-K-M matrix',
-           c23  = sqrt(1-s23**2) : 	'parameter  of C-K-M matrix',
-           c13  = sqrt(1-s13**2) : 	'parameter  of C-K-M matrix'.
+parameter  c12  = sqrt(1-s12**2) : 	'Parameter  of C-K-M matrix',
+           c23  = sqrt(1-s23**2) : 	'Parameter  of C-K-M matrix',
+           c13  = sqrt(1-s13**2) : 	'Parameter  of C-K-M matrix'.
 
 parameter  Vud = c12*c13 		: 'C-K-M matrix element',
 	   Vus = s12*c13 		: 'C-K-M matrix element',
@@ -72,7 +72,7 @@ spinor		u:('u-quark',color c3, mass Mup = 0.0017),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% scalars %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-scalar h/h: ('SM Higgs', mass Mh=160, width wh=1.461),
+scalar h/h: ('light Higgs', mass Mh=160, width wh=1.461),
        H/H: ('heavy Higgs', mass MHH=210, width wHH=1.0),
        A0/A0: ('cp-odd Higgs', mass MA0=220, width wA0=1.0),
        'H+'/'H-': ('charged Higgs', mass MHc=205, width wHc=1.0).
@@ -113,7 +113,7 @@ lterm -F**2/4  where
 lterm -F**2/4  where
         F=deriv^mu*WW1^nu^a-deriv^nu*WW1^mu^a -g*eps^a^b^c*WW1^mu^b*WW1^nu^c.
 
-%%%%%%%%%%%%%%%%%% left fermion interaction with gauge fields %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%% left fermion interaction with gauge fields %%%%%%%%%%%%%%%%%%
 
 lterm  	anti(psi)*gamma*(1-g5)/2*(i*deriv-g*taupm*WW/2-Y*g1*B1)*psi
 		where 
@@ -124,7 +124,7 @@ lterm  	anti(psi)*gamma*(1-g5)/2*(i*deriv-g*taupm*WW/2-Y*g1*B1)*psi
 			psi=q2a, Y= 1/6;
 			psi=q3a, Y= 1/6.
 
-%%%%%%%%%%%%%%%%%% right fermion interaction with gauge fields %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% right fermion interaction with gauge fields %%%%%%%%%%%%%%%%%
 
 lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 		where 
@@ -138,33 +138,43 @@ lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 			psi=s, Y= -1/3;
 			psi=b, Y= -1/3.
 
-%%%%%%%%%%%%%%%%%%% quark-gluon interaction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% quark-gluon interaction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 lterm  GG*anti(psi)*lambda*gamma*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
 %%%%%%%%%%%%%%%%%%%%%%%% model parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-let  vvev = 2*MW*SW/EE.
+let  	   vvev = 2*MW*SW/EE.
+parameter  md2 = 10000:'minimal condition',
+	   la2 = 2.24484:'Lambda-2', la7 = -0.05374:'Lamda-7'.
 
-parameter  sb = 0.8:'Sinus beta', cb = sqrt(1-sb**2):'Cosine beta'.
+parameter  sbma = 0.76:'Sin(beta-alpha)'.
+parameter  cbma = sqrt(1-sbma**2):'Cos(beta-alpha)'.
 
-let vev1 = vvev*cb.
+%parameter  rD11 = 2 		: 'FCNC Down matrix element',
+%	   rD12 = 3 		: 'FCNC Down matrix element',
+% 	   rD13 = 5     	: 'FCNC Down matrix element',
+%           rD21 = 6 		: 'FCNC Down matrix element',
+%           rD22 = 1.6		: 'FCNC Down matrix element',
+%	   rD23 = 0.7 		: 'FCNC Down matrix element',
+%	   rD31 = 10 		: 'FCNC Down matrix element',
+%	   rD32 = 11.4		: 'FCNC Down matrix element',
+%	   rD33 = 11   		: 'FCNC Down matrix element'.
 
-parameter  sa = -0.5:'Sinus alpha', ca = sqrt(1-sa**2):'Cosine alpha',
-	   md2 = 10000:'minimal condition',
-	   la2 = 0.5:'potencial-2', la7 = 0.2:'potential-7'.
+%let RoD = { {rD11,rD12,rD13}, {rD21,rD22,rD23}, {rD31,rD32,rD33} } .
 
-parameter  sbpa = sb*ca + cb*sa:'sin(beta+alpha)', sbma = sb*ca - cb*sa:'sin(beta-alpha)', 
-	   cbpa = cb*ca - sb*sa:'cos(beta+alpha)', cbma = cb*ca + sb*sa:'cos(beta-alpha)'.
+%parameter  rU11 = 2.8 		: 'FCNC Up matrix element',
+%	   rU12 = 3.3 		: 'FCNC Up matrix element',
+%	   rU13 = 5.5     	: 'FCNC Up matrix element',
+%          rU21 = 6.5		: 'FCNC Up matrix element',
+%           rU22 = 1.2		: 'FCNC Up matrix element',
+%	   rU23 = 0.9 		: 'FCNC Up matrix element',
+%	   rU31 = 10.2 		: 'FCNC Up matrix element',
+%	   rU32 = 1.1		: 'FCNC Up matrix element',
+%	   rU33 = 7   		: 'FCNC Up matrix element'.
 
-parameter s2b=2*sb*cb:'sinus 2beta'.
-
-parameter c2b=cb**2-sb**2:'coseno 2beta'.
-
-parameter s2a=2*sa*ca:'sinus 2alpha'.
-
-parameter c2a=ca**2-sa**2:'coseno 2alpha'.
+%let RoU = { {rU11,rU12,rU13} , {rU21,rU22,rU23}, {rU31,rU32,rU33} }. 
 
 %%%%%%%%%%%%%%%%%%%% scalar potential parameters %%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -176,13 +186,13 @@ let la4 = (MA0**2 - 2*MHc**2 + sbma**2*MHH**2 + cbma**2*Mh**2)/vvev**2.
 
 let la5 = (sbma**2*MHH**2 - MA0**2 + cbma**2*Mh**2)/vvev**2.
 
-let la6 = -((MHH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/(2*vvev**2).
+let la6 = -(sbma*cbma*(MHH**2 - Mh**2))/(vvev**2).
 
 let m11 = (-cbma**2*MHH**2 - sbma**2*Mh**2)/2.
 
-let m12 = -((MHH**2 - Mh**2)*(s2b*c2a - c2b*s2a))/4.
+let m12 = -(sbma*cbma*(MHH**2 - Mh**2))/2.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% doublets scalars definition %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% doublets scalars definition %%%%%%%%%%%%%%%%%%
 
 let ph1 = { -i*'W+.f', (vev(vvev)+ cbma*H + sbma*h + i*'Z.f')/Sqrt2 },
     Ph1 = { i*'W-.f', (vev(vvev) + cbma*H + sbma*h - i*'Z.f')/Sqrt2 }.
@@ -208,7 +218,7 @@ lterm -la6*(Ph1*ph1*Ph1*ph2 + ph1*Ph1*ph1*Ph2).
 
 lterm -la7*(Ph2*ph2*Ph1*ph2 + ph2*Ph2*ph1*Ph2).
 
-%%%%%%%%%%%%%%%%%% kinetic terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% kinetic terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 let Dph1^mu^a = (deriv^mu+i*g1/2*B1^mu)*ph1^a +
 	 i*g/2*taupm^a^b^c*WW^mu^c*ph1^b.
@@ -227,7 +237,7 @@ let DPh2^mu^a = (deriv^mu-i*g1/2*B1^mu)*Ph2^a
 lterm DPh2*Dph2. 
 
 
-%%%%%% yukawa coupling %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% yukawa coupling %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj )
     where
@@ -255,14 +265,11 @@ lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph1 + AddHermConj)
 	M=Mm,  pl=l2,  pr=e2;
 	M=Mt,  pl=l3,  pr=e3.
 
-%%%%%%%%%% aligned %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% aligned-hipotesis %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-parameter sbu = 0.98:'Sinus betau', cbu = sqrt(1-sbu**2):'Cosine betau'.
-parameter sbd = 0.98:'Sinus betad', cbd = sqrt(1-sbd**2):'Cosine betad'.
-parameter sbl = 0.98:'Sinus betal', cbl = sqrt(1-sbl**2):'Cosine betal'.
-parameter cotu = cbu/sbu: 'cotangente betau',
-          tand = sbd/cbd: 'tangente betad',
-          tanl = sbl/cbl: 'tangente betal'. 
+parameter cotu = 0.9: 'cotangente betaup',
+          tand = 2.5: 'tangente betadown',
+          tanl = 0.8: 'tangente betalepton'. 
 
 %let l13={n1,-tanl*e1}, L13={N1,-tanl*E1}.
 %let l23={n2,-tanl*e2}, L23={N2,-tanl*E2}.
@@ -299,7 +306,7 @@ lterm  -(M*Sqrt2/vvev)*(anti(pl)*(1+g5)/2*pr*ph2 + AddHermConj )
 	M=-tanl*Mt,  pl=l3,  pr=e3.
 
 
-%%%%%%%%%%%%%%%%%%%% ghosts %%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% ghosts %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 lterm -i*GG*f_SU3*ccghost(G)*G^mu*deriv^mu*ghost(G).
 lterm  -1/2*(deriv*G)**2.
@@ -328,16 +335,7 @@ lterm i*EE*MW/2/CW/SW*(
 prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, h=34, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, 'A0'=35, H=36, 'H+'=37).
 
 SetAngle(1-SW**2=CW**2).
-SetAngle(1-sa**2=ca**2).
-SetAngle(1-sb**2=cb**2).
-SetAngle(sbpa=sb*ca+cb*sa).
-SetAngle(sbma=sb*ca-cb*sa).
-SetAngle(cbma=cb*ca+sb*sa).
-SetAngle(cbpa=cb*ca-sb*sa).
-SetAngle(s2b=2*sb*cb).
-SetAngle(c2b=cb**2-sb**2).
-SetAngle(s2a=2*sa*ca).
-SetAngle(c2a=ca**2-sa**2).
+SetAngle(sbma**2+cbma**2=1).
 SetEM(A,EE).
 option chepLPWidth=1484.
 option SmartAngleComb=1.
