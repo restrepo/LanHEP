@@ -1,0 +1,39 @@
+parameter  h11 = 0.3 	: 'yuk matrix element',
+	   h12 = 0.0 	: 'yuk matrix element',
+	   h13 = 0.0    : 'yuk matrix element',
+           h21 = 0.9539 : 'yuk matrix element',
+           h22 = 0.0    : 'yuk matrix element',
+	   h23 = 0.0	: 'yuk matrix element',
+	   h31 = 0.0 	: 'yuk matrix element',
+	   h32 = 0.0	: 'yuk matrix element',
+	   h33 = 0.0	: 'yuk matrix element'.
+
+OrthMatrix( { {h11,h12,h13}, {h21,h22,h23}, {h31,h32,h33}} ).
+
+spinor 		'~n1'/'~N1':('re-neutrino', mass MN1 = 100, width wn1 = 0), 	   
+		'~n2'/'~N2':('rm-neutrino', mass MN2 = 200, width wn2 = 0),
+		'~n3'/'~N3':('rt-neutrino', mass MN3 = 300, width wn3 = 0).
+
+lterm h*(n*('~H0'+i*'~A0')/Sqrt2-l*'~H+')*anti(N) + AddHermConj
+      where
+	h = h11, n = n1, l = e1, N = '~n1';
+	h = h12, n = n1, l = e2, N = '~n2';
+	h = h13, n = n1, l = e3, N = '~n3';
+	h = h21, n = n2, l = e1, N = '~n1';
+	h = h22, n = n2, l = e2, N = '~n2';
+	h = h23, n = n2, l = e3, N = '~n3';
+	h = h31, n = n3, l = e1, N = '~n1';
+	h = h32, n = n3, l = e2, N = '~n2';
+	h = h33, n = n3, l = e3, N = '~n3'.
+
+lterm M*anti(N)*N/2 + AddHermConj
+      where
+	M = MN1, N = '~n1';
+	M = MN2, N = '~n2';
+	M = MN3, N = '~n3'.
+
+lterm   anti(psi)*gamma*(1+g5)/2*(i*deriv)*psi
+                where 
+                        psi='~n1';
+                        psi='~n2';
+                        psi='~n3'.
