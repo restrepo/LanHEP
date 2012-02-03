@@ -1,3 +1,5 @@
+TODO: Official seesaw radiative model is in branck seesaw. Please clean relevant branches according Jose's mail 
+
 To create the executable file  lhep , type 'make`. When the LanHEP is complied,
 remove object files by typing 'make clean`. The archive also contains 
 the directory  mdl  with startup file and examples for several physical
