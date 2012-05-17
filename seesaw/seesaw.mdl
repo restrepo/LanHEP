@@ -163,7 +163,7 @@ use scalar_sector. %Lectura del sector escalar
 
 use right_neutrinos. %Lectura del sector de neutrinos derechos
 
-prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, H=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, '~A0'=35, '~H0'=36, '~H+'=37, '~n1'=9900012, '~n2'=9900014, '~n3'=9900016).
+prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, H=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, '~A0'=36, '~H0'=35, '~H+'=37, '~n1'=9900012, '~n2'=9900014, '~n3'=9900016).
 
 lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*ph1 + anti(pr)*(1-g5)/2*pl*PH1 )
     where
