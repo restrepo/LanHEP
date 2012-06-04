@@ -52,3 +52,11 @@ option TexFileStart=[
 do_if FeynArts==1.
 read 'feynarts.rc'.
 end_if.
+
+do_if CalcHEP==1.
+read 'calchep.rc'.
+end_if.
+
+do_if UFO==1.
+read 'ufo.rc'.
+end_if.

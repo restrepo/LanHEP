@@ -227,7 +227,20 @@ Term ProcImPrt(Term t,  Term ind)
 	Term prt;
 	Atom pcomm=0, ptname=0;
 	
-
+	if(is_compound(t) && CompoundArity(t)>2 && 
+		is_compound(CompoundArg1(t))&&CompoundName(CompoundArg1(t))==OPR_DIV)
+	{
+		Term r;
+		r=CompoundArg1(t);
+		if(CompoundArg2(r)==NewInteger(2))
+		{
+			if(CompoundArg1(r)==NewInteger(1))
+				SetCompoundArg(t,1,NewInteger(-1));
+			else if(CompoundArg1(r)==NewInteger(3))
+				SetCompoundArg(t,1,NewInteger(-3));
+		}
+	}
+	
 	if(!is_compound(t) || CompoundArity(t)<3 || CompoundArity(t)>5 ||
 		!is_integer(CompoundArg1(t)) || !is_integer(CompoundArg2(t)) ||
 		!is_integer(CompoundArgN(t,3)) ||
@@ -262,7 +275,7 @@ Term ProcImPrt(Term t,  Term ind)
 		SetCompoundArg(prt,1,n);
 		SetCompoundArg(prt,2,an);
 		SetCompoundArg(prt,3,pcomm?pcomm:NewAtom("im particle",0));
-		SetCompoundArg(prt,4,NewInteger(spin?2:0));
+		SetCompoundArg(prt,4,NewInteger((spin>0)?(spin?2:0):(-spin)));
 		SetCompoundArg(prt,5,spin==2?0:NewAtom("Maux",0));
 		if(spin<2)
 			SetCompoundArg(prt,7,OPR_MLT);

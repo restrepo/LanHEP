@@ -283,10 +283,9 @@ static void reg_spi_transf(Atom p, Term a1, int anti)
 					continue;
 				}
 	}
-	
-	if(prt && !z && !gpm)
-		continue;
-	
+	 if(prt && !z && !gpm)
+		 continue;
+
       if(z==0||prt==0||gpm==0)
 	  {
 		  err=1;

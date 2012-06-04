@@ -2,7 +2,11 @@
 
 int verb_charge = 0;
 
+static int charge_sign=1;
+
 static Atom ph_f=0, ph_c=0;
+
+void cls_set_em(void);
 
 int defined_em_charge(void)
 	{
@@ -11,13 +15,22 @@ int defined_em_charge(void)
 
 Term ProcSetEM(Term t, Term ind)
 	{
-	if(!is_compound(t) || CompoundArity(t)!=2 ||
-		!is_atom(CompoundArg1(t)) || !is_atom(CompoundArg2(t)))
+	Term ee;
+	if(!is_compound(t) || CompoundArity(t)!=2)
 			{
 			ErrorInfo(226);
 			puts("bad argumants in SetEM call.\n");
 			return 0;
 			}
+			
+	ee=CompoundArg2(t);
+	if(is_compound(ee) && CompoundName(ee)==OPR_MINUS 
+			&& is_atom(CompoundArg1(ee)))
+	{
+		charge_sign=-1;
+		SetCompoundArg(t,2,CompoundArg1(ee));
+	}
+	if(!is_atom(CompoundArg1(t)) || !is_atom(CompoundArg2(t)))
 	if(ph_f)
 		{
 		ErrorInfo(227);
@@ -80,6 +93,7 @@ static void set_sc_ch(Term a2, Atom p1, Atom p2, int php)
 			cd=gcf(num,den);
 			num/=cd;
 			den/=cd;
+			num*=charge_sign;
 			SetAtomProperty(p1,A_EM_CHARGE,
 				MakeCompound2(OPR_DIV,NewInteger(-num), NewInteger(den)));
 			SetAtomProperty(p2,A_EM_CHARGE,
@@ -169,6 +183,8 @@ static void set_sp_ch(Term a2, Atom p1, Atom p2, int php)
 	cd=gcf(num,den);
 	num/=cd;
 	den/=cd;
+	num*=charge_sign;
+
 	SetAtomProperty(p1,A_EM_CHARGE,
 		MakeCompound2(OPR_DIV,NewInteger(num), NewInteger(den)));
 	SetAtomProperty(p2,A_EM_CHARGE,
@@ -235,6 +251,7 @@ static void set_ve_ch(Term a2, Atom p1, Atom p2, int php)
 			cd=gcf(num,den);
 			num/=cd;
 			den/=cd;
+			num*=charge_sign;
 			SetAtomProperty(p1,A_EM_CHARGE,
 				MakeCompound2(OPR_DIV,NewInteger(num), NewInteger(den)));
 			SetAtomProperty(p2,A_EM_CHARGE,
@@ -350,6 +367,8 @@ void check_em_charge(List lagr)
 			     
 		l1=ListTail(l1);
 		}
+		
+	cls_set_em();
 		
 	l1=lagr;
 	while(!is_empty_list(l1))

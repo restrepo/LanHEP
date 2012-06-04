@@ -3,11 +3,16 @@
 
 int opSplitCol1=2;
 
+extern int VerbMode;
+
 static int alg1_cw_poly(Term a1);
 static int alg1_cw_mono(Term m1);
 
 static int alg1_sw_poly(Term a1);
 static int alg1_sw_mono(Term m1);
+
+static int alg1_fw_poly(Term a1);
+static int alg1_fw_mono(Term m1);
 
 extern int VerbMode;
 
@@ -16,45 +21,59 @@ static int acmp(Atom a, Atom b)
 	return strcmp(AtomValue(a), AtomValue(b));
 }
 
-static Term mk_im_f0(int apcol, Term inc)
+static List mk_ind(Term inc, Term ins, Term inv1, Term inv2)
+{
+	List ret=0;
+	if(ins)
+		ret=MakeList1(CopyTerm(ins));
+	if(inv1)
+		ret=AppendLast(ret,CopyTerm(inv1));
+	if(inv2)
+		ret=AppendLast(ret,CopyTerm(inv2));
+	if(inc)
+		ret=AppendLast(ret,CopyTerm(inc));
+	return ret;
+}
+
+static Term mk_im_f0(int apcol, Term inc, Term inv1, Term inv2)
 {
 	Atom c;
 	Term t;
 	t=MakeCompound(A_I,3);
-	SetCompoundArg(t,1,NewInteger(0));
+	if(inv1==0 && inv2==0)
+		SetCompoundArg(t,1,NewInteger(0));
+	else if(inv2==0)
+		SetCompoundArg(t,1,NewInteger(1));
+	else
+		SetCompoundArg(t,1,NewInteger(2));
 	SetCompoundArg(t,2,apcol?NewInteger(8):NewInteger(1));
 	SetCompoundArg(t,3,NewInteger(0));
 	c=ProcImPrt(t,0);
-	return MakeCompound2(OPR_FIELD,apcol?MakeList1(CopyTerm(inc)):0,c);
+	return MakeCompound2(OPR_FIELD,mk_ind(inc,0,inv1,inv2),c);
 }
 
-static Term mk_im_f(int apdim, int apcol, Term inw, Term inc)
+static Term mk_im_f(int apdim, int apcol, Term inw, Term inc,
+		Term inv1, Term inv2)
 {
 	Term a,m;
 	List al=0;
 	int i;
 	if(apdim==0)
-		return mk_im_f0(apcol,inc);
+		return mk_im_f0(apcol,inc, inv1, inv2);
 	
 	for(i=0;i<apdim;i++)
 	{
 		m=MakeCompound(A_MTERM,4);
 		SetCompoundArg(m,1,NewInteger(1));
 		SetCompoundArg(m,2,NewInteger(1));
-		SetCompoundArg(m,3,MakeList1(mk_im_f0(apcol,inc)));
-		a=MakeCompound2(A_ALG1,MakeList1(m),0);
-		if(apcol)
-			SetCompoundArg(a,2,MakeList1(CopyTerm(inc)));
+		SetCompoundArg(m,3,MakeList1(mk_im_f0(apcol,inc,inv1,inv2)));
+		a=MakeCompound2(A_ALG1,MakeList1(m),mk_ind(inc,0,inv1,inv2));
 		al=AppendLast(al,a);
 	}
 	
 	m=MakeCompound(OPR_WILD,2);
 	SetCompoundArg(m,2,al);
-	if(apcol)
-		al=MakeList1(CopyTerm(inc));
-	else
-		al=NewList();
-	al=AppendLast(al,CopyTerm(inw));
+	al=AppendLast(mk_ind(inc,0,inv1,inv2),CopyTerm(inw));
 	SetCompoundArg(m,1,al);
 	return m;
 }
@@ -145,6 +164,175 @@ static void mk_im_f_2(int apdim, int apcol, Term inw1, Term inc1,
 	return ;
 }
 
+List alg1_spl_col2(List a1)
+{
+	
+	List ar=0, al=0, ltc=0;
+	List l1,l2;
+	
+	
+	for(l1=a1;l1;l1=ListTail(l1))
+	{
+
+		int nu=0, de=0, apdim=0, apcol=0, need_sq2;	
+		Term inw=0, inc=0, inv=0, inv2=0, ins=0;
+		List in1=0, in2=0;
+		Atom Maux;
+		Atom le1, le2;
+		Term le;
+		
+		if(CompoundArgN(ListFirst(l1),4))
+			continue;
+		
+		l2=CompoundArgN(ListFirst(l1),3);
+		if(ListLength(l2)!=2)
+			continue;
+		if(CompoundName(ListFirst(l2))!=OPR_LET || 
+				CompoundName(ListFirst(ListTail(l2)))!=OPR_LET)
+			continue;
+
+		le1=CompoundArg2(ListFirst(l2));
+		le2=CompoundArg2(ListFirst(ListTail(l2)));
+
+		if(GetAtomProperty(le1,A_COLOR)!=NewInteger(2))
+			continue;
+		if(GetAtomProperty(le1,OPR_FIELD)!=NewInteger(2))
+			continue;
+		if(GetAtomProperty(le2,A_COLOR)!=NewInteger(2))
+			continue;
+		if(GetAtomProperty(le2,OPR_FIELD)!=NewInteger(2))
+			continue;
+		if(le1!=le2 && le1!=GetAtomProperty(l2,A_ANTI))
+			continue;
+
+		nu=IntegerValue(CompoundArg1(ListFirst(l1)));
+		de=IntegerValue(CompoundArg2(ListFirst(l1)));
+		in1=CopyTerm(CompoundArg1(ListFirst(l2)));
+		in2=CopyTerm(CompoundArg1(ListFirst(ListTail(l2))));
+
+		
+		if((nu!=1 && nu!=-1) || (de!=1 && de!=2 && de!=4))
+			continue;
+
+		for(l2=in1;l2;l2=ListTail(l2))
+		{
+			if(CompoundName(ListFirst(l2))==OPR_WILD)
+			{
+				if(apdim)
+					break;
+				apdim=IntegerValue(CompoundArgN(ListFirst(l2),3));
+				inw=ListFirst(l2);
+			}
+			else if(CompoundName(CompoundArg1(ListFirst(l2)))==A_COLOR)
+			{
+				if(apcol)
+					break;
+				if( CompoundArg1(CompoundArg1(ListFirst(l2)))!=
+					CompoundArg2(CompoundArg1(ListFirst(l2))))
+					apcol=3;
+				else
+					apcol=8;
+				inc=ListFirst(l2);
+			}
+			else if(CompoundName(CompoundArg1(ListFirst(l2)))==A_LORENTZ && 
+					CompoundArg1(CompoundArg1(ListFirst(l2)))!=
+					CompoundArg2(CompoundArg1(ListFirst(l2))))
+			{
+				if(ins)
+					break;
+				ins=ListFirst(l2);
+			}
+			else if(CompoundName(CompoundArg1(ListFirst(l2)))==A_LORENTZ && 
+					CompoundArg1(CompoundArg1(ListFirst(l2)))==
+					CompoundArg2(CompoundArg1(ListFirst(l2))))
+			{
+				if(inv && inv2)
+					break;
+				if(!inv) inv=ListFirst(l2);
+				else inv2=ListFirst(l2);
+			}
+			else
+			{
+				break;
+			}
+		}
+		
+		if(l2)
+			continue;
+		if(ins && inv2)
+			continue;
+		if(le1!=le2 || ins)
+			continue;
+	
+		ltc=AppendLast(ltc,l1);
+	
+	
+
+
+		
+		if(nu==-1)
+		{
+			nu=1;
+			if(de<0)
+			{
+				de=-de;
+				nu=-nu;
+			}
+			else
+				de=-de;
+		}
+
+		if(de==4 || de==-4) 
+			de/=2;
+		else if(de==2 || de==-2)
+		{
+			de/=2;
+			need_sq2=0;
+		}
+		else
+			need_sq2=1;
+
+		if(nu<0)
+			nu=-nu;
+	
+		ar=mk_im_f(apdim,apcol,inw,inc,inv,inv2);
+		Maux=NewAtom("Maux",0);
+	
+		l2=MakeList1(ar);
+		l2=AppendLast(l2,MakeCompound2(OPR_LET,CopyTerm(in1),le1));
+		if(inv2==0)
+			l2=AppendLast(l2,MakeCompound2(OPR_PARAMETER,0,Maux));
+		if(need_sq2)
+			l2=AppendLast(l2,MakeCompound2(OPR_PARAMETER,0,A_SQRT2));
+		
+		le=MakeCompound(A_MTERM,4);
+		SetCompoundArg(le,1,NewInteger(nu));
+		SetCompoundArg(le,2,NewInteger(de));
+		SetCompoundArg(le,3,l2);
+		
+		a1=AppendLast(a1,le);
+	
+	
+		if(VerbMode)
+		{
+			WarningInfo(214);
+			printf("%s*%s ",AtomValue(le1),AtomValue(le2));
+			puts("4-colored multiplet product splitted");
+		}
+	}
+	
+
+	for(l1=ltc;l1;l1=ListTail(l1))
+		a1=CutFromList(a1,ListFirst(l1));
+	RemoveList(ltc);
+
+	
+	return a1;
+	
+	
+}
+
+
 List alg1_spl_col(List a1)
 {
 	List ar=0, al=0, ltc=0;
@@ -201,7 +389,6 @@ List alg1_spl_col(List a1)
 	}
 	
 				
-		
 	
 	for(l1=a1;l1;l1=ListTail(l1))
 	{
@@ -268,6 +455,7 @@ List alg1_spl_col(List a1)
 				RemoveList(ar);
 				FreeAtomic(in1);
 				FreeAtomic(in2);
+				a1=alg1_spl_col2(a1);	
 				return a1;
 			}
 
@@ -280,7 +468,10 @@ List alg1_spl_col(List a1)
 	}
 	
 	if(is_empty_list(ltc))
+	{
+		a1=alg1_spl_col2(a1);	
 		return a1;
+	}
 	
 	al=SortedList(al,acmp);
 	ar=SortedList(ar,acmp);
@@ -294,6 +485,7 @@ List alg1_spl_col(List a1)
 		RemoveList(ar);
 		FreeAtomic(in1);
 		FreeAtomic(in2);
+		a1=alg1_spl_col2(a1);	
 		return a1;
 	}
 	
@@ -324,6 +516,7 @@ List alg1_spl_col(List a1)
 				RemoveList(ar);
 				FreeAtomic(in1);
 				FreeAtomic(in2);
+				a1=alg1_spl_col2(a1);	
 				return a1;
 			}
 			apcol=8;
@@ -430,7 +623,7 @@ List alg1_spl_col(List a1)
 	if(nu<0)
 		nu=-nu;
 	
-	ar=mk_im_f(apdim,apcol,inw,inc);
+	ar=mk_im_f(apdim,apcol,inw,inc,0,0);
 	Maux=NewAtom("Maux",0);
 	
 	for(l1=al;l1;l1=ListTail(l1))
@@ -712,6 +905,13 @@ static int alg1_cw_mono(Term m1)
 	
 	for(l1=CompoundArgN(m1,3);l1;l1=ListTail(l1))
 	{
+		if(CompoundName(ListFirst(l1))==OPR_PARAMETER &&
+				(CompoundArg2(ListFirst(l1))==A_SIN||
+				 CompoundArg2(ListFirst(l1))==A_COS))
+		{
+			return -1;
+		}
+		
 		if(CompoundName(ListFirst(l1))==OPR_FIELD &&
 				GetAtomProperty(CompoundArg2(ListFirst(l1)),A_COLOR))
 		{
@@ -763,6 +963,12 @@ static int alg1_sw_mono(Term m1)
 	
 	for(l1=CompoundArgN(m1,3);l1;l1=ListTail(l1))
 	{
+		if(CompoundName(ListFirst(l1))==OPR_PARAMETER &&
+				(CompoundArg2(ListFirst(l1))==A_SIN||
+				 CompoundArg2(ListFirst(l1))==A_COS))
+		{
+			return -1;
+		}
 		if(CompoundName(ListFirst(l1))==OPR_FIELD)
 		{
 			Term prp;
@@ -797,6 +1003,59 @@ static int alg1_sw_mono(Term m1)
 		{
 			Term prop;
 			prop=GetAtomProperty(CompoundArg2(ListFirst(l1)),OPR_SCALAR);
+			if(IntegerValue(prop)==-1)
+				return -1;
+			ret+=IntegerValue(prop);
+		}
+	}
+	
+	return ret;
+}
+
+static int alg1_fw_mono(Term m1)
+{
+	int ret=0;
+	
+	List l1,l2;
+	
+	for(l1=CompoundArgN(m1,3);l1;l1=ListTail(l1))
+	{
+		if(CompoundName(ListFirst(l1))==OPR_PARAMETER &&
+				(CompoundArg2(ListFirst(l1))==A_SIN||
+				 CompoundArg2(ListFirst(l1))==A_COS))
+		{
+			return -1;
+		}
+		if(CompoundName(ListFirst(l1))==OPR_FIELD)
+		{
+			Term prp;
+			if(CompoundArg2(ListFirst(l1))==A_VEV)
+				return -1;
+			ret++;
+			continue;
+		}
+		
+		if(CompoundName(ListFirst(l1))==OPR_WILD)
+		{
+			int rt1;
+			List al;
+			al=CompoundArg2(ListFirst(l1));
+			if(is_empty_list(al))
+				continue;
+			rt1=alg1_fw_poly(ListFirst(al));
+			if(rt1==-1)
+				return -1;
+			for(l2=ListTail(al);l2;l2=ListTail(l2))
+				if(rt1!=alg1_fw_poly(ListFirst(l2)))
+					return -1;
+			ret+=rt1;
+			continue;
+		}
+		
+		if(CompoundName(ListFirst(l1))==OPR_LET)
+		{
+			Term prop;
+			prop=GetAtomProperty(CompoundArg2(ListFirst(l1)),OPR_FIELD);
 			if(IntegerValue(prop)==-1)
 				return -1;
 			ret+=IntegerValue(prop);
@@ -841,17 +1100,21 @@ static int alg1_sw_poly(Term a1)
 	return ret;
 }
 
-void alg1_let_cw(Atom let)
+static int alg1_fw_poly(Term a1)
 {
-	Term prp;
-	int cw;
-	prp=GetAtomProperty(let,PROP_TYPE);
-	cw=alg1_cw_poly(CompoundArg1(prp));
-/*
-printf("color weight of '%s' is %d\n",AtomValue(let),cw);
-*/
-	SetAtomProperty(let,A_COLOR,NewInteger(cw));
-	alg1_let_sw(let);
+	int ret=0;
+	List l1;
+	
+	l1=CompoundArg1(a1);
+	if(is_empty_list(l1))
+		return 0;
+	ret=alg1_fw_mono(ListFirst(l1));
+	
+	for(l1=ListTail(l1);l1;l1=ListTail(l1))
+		if(alg1_fw_mono(ListFirst(l1))!=ret)
+			return -1;
+	
+	return ret;
 }
 
 void alg1_let_sw(Atom let)
@@ -860,11 +1123,37 @@ void alg1_let_sw(Atom let)
 	int cw;
 	prp=GetAtomProperty(let,PROP_TYPE);
 	cw=alg1_sw_poly(CompoundArg1(prp));
-/*
-if(cw==2)
-printf("scalar weight of '%s' is %d\n",AtomValue(let),cw);
-*/
+
+/*if(cw==2) printf("scalar weight of '%s' is %d\n",AtomValue(let),cw);*/
+
 	SetAtomProperty(let,OPR_SCALAR,NewInteger(cw));
+}
+
+void alg1_let_fw(Atom let)
+{
+	Term prp;
+	int cw;
+	prp=GetAtomProperty(let,PROP_TYPE);
+	cw=alg1_fw_poly(CompoundArg1(prp));
+
+/*if(cw==2) printf("field weight of '%s' is %d\n",AtomValue(let),cw);*/
+
+	SetAtomProperty(let,OPR_FIELD,NewInteger(cw));
+}
+
+
+void alg1_let_cw(Atom let)
+{
+	Term prp;
+	int cw;
+	prp=GetAtomProperty(let,PROP_TYPE);
+	cw=alg1_cw_poly(CompoundArg1(prp));
+
+/*if(cw==2) printf("color weight of '%s' is %d\n",AtomValue(let),cw);*/
+
+	SetAtomProperty(let,A_COLOR,NewInteger(cw));
+	alg1_let_sw(let);
+	alg1_let_fw(let);
 }
 
 void alg1_rem_c4(Term a1)

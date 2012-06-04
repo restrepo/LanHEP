@@ -2008,7 +2008,7 @@ setprp:
 	for(i=1;i<=dim;i++)
 	for(j=1;j<=dim;j++)
 		{						
-		Term tt;
+		Term tt, att;
 		tt=CompoundArgN(CompoundArgN(t1,i),j);					
 		t3=MakeCompound(A_I,4);
 		SetCompoundArg(t3,1,lab);
@@ -2016,6 +2016,10 @@ setprp:
 		SetCompoundArg(t3,3,NewInteger(i));
 		SetCompoundArg(t3,4,NewInteger(j));
 		SetAtomProperty(tt,A_ORTH_MATR,t3);
+		att=GetAtomProperty(tt,A_ANTI);
+		if(att)
+			SetAtomProperty(att,A_ORTH_MATR,t3);
+			
 		}
 		
 	herm_matrices=AppendLast(herm_matrices,MakeCompound2(OPR_DIV,lab,t1));

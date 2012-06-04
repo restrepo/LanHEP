@@ -419,7 +419,7 @@ prc:
 		
 	read_file(0,file);
 		
-	if(file!=NULL && strcmp(file,"lhep.rc"))
+	if(file!=NULL && strcmp(file,"lhep.rc") && !doinitfile)
 		{
 		int min,sec;
 		time_t ttt;
@@ -758,6 +758,7 @@ extern List opFAGS, opFAGE;
 extern int opclsreal, oprcmatr, opclsred;
 extern List abbr_coeffs;
 
+List UFOparah=0, UFOparth=0, UFOloreh=0, UFOverth=0, UFOcouph=0;
 
 Term ProcOption(Term t, Term i)
 {
@@ -1196,6 +1197,97 @@ Term ProcOption(Term t, Term i)
 		 puts("wrong value for 'AbbrCoeff' option.");
 		 return 0;
 	 } 
+	 if(strcmp(s,"UFOParaHdr")==0)
+	 {
+		 if(is_list(val))
+		 {
+			 List l;
+			 for(l=val;l;l=ListTail(l))
+				 if(!is_atom(ListFirst(l)))
+					 break;
+			 if(l==0)
+			 {
+			 UFOparah=val;
+			 return 0;
+		 	}
+		 }
+		 ErrorInfo(415);
+		 puts("wrong value for 'UFOxxxHdr' option.");
+		 return 0;
+	 } 
+	 if(strcmp(s,"UFOPartHdr")==0)
+	 {
+		 if(is_list(val))
+		 {
+			 List l;
+			 for(l=val;l;l=ListTail(l))
+				 if(!is_atom(ListFirst(l)))
+					 break;
+			 if(l==0)
+			 {
+			 UFOparth=val;
+			 return 0;
+		 	}
+		 }
+		 ErrorInfo(415);
+		 puts("wrong value for 'UFOxxxHdr' option.");
+		 return 0;
+	 } 
+	 if(strcmp(s,"UFOVertHdr")==0)
+	 {
+		 if(is_list(val))
+		 {
+			 List l;
+			 for(l=val;l;l=ListTail(l))
+				 if(!is_atom(ListFirst(l)))
+					 break;
+			 if(l==0)
+			 {
+			 UFOverth=val;
+			 return 0;
+		 	}
+		 }
+		 ErrorInfo(415);
+		 puts("wrong value for 'UFOxxxHdr' option.");
+		 return 0;
+	 } 
+	 if(strcmp(s,"UFOLoreHdr")==0)
+	 {
+		 if(is_list(val))
+		 {
+			 List l;
+			 for(l=val;l;l=ListTail(l))
+				 if(!is_atom(ListFirst(l)))
+					 break;
+			 if(l==0)
+			 {
+			 UFOloreh=val;
+			 return 0;
+		 	}
+		 }
+		 ErrorInfo(415);
+		 puts("wrong value for 'UFOxxxHdr' option.");
+		 return 0;
+	 } 
+	 if(strcmp(s,"UFOCoupHdr")==0)
+	 {
+		 if(is_list(val))
+		 {
+			 List l;
+			 for(l=val;l;l=ListTail(l))
+				 if(!is_atom(ListFirst(l)))
+					 break;
+			 if(l==0)
+			 {
+			 UFOcouph=val;
+			 return 0;
+		 	}
+		 }
+		 ErrorInfo(415);
+		 puts("wrong value for 'UFOxxxHdr' option.");
+		 return 0;
+	 } 
+
 	ErrorInfo(413);
 	printf("unknown option '%s'.\n",s);	 
 				

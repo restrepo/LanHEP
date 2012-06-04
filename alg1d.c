@@ -145,17 +145,64 @@ static void repl_ind(Term a2, List oi, List ni)
 	return ;
 	}			
 		
+extern int infi_order;
 
 static List mk_let(Term m1, List cut, Term a1)
 	{
-	List l;
+	List l,l2;
 	List lb,le;
 	List sd;
 	int num1,den1;
+	int io1=0,io2=0,rmn=0;
+	
+	for(l=CompoundArgN(m1,3);l;l=ListTail(l))
+	{
+		Term prp=0;
+		if(CompoundName(ListFirst(l))==OPR_PARAMETER)
+				prp=GetAtomProperty(CompoundArg2(ListFirst(l)),A_INFINITESIMAL);
+		if(prp && IntegerValue(CompoundArg1(prp))>0)
+				io1+=IntegerValue(CompoundArg1(prp));
+		if(CompoundName(ListFirst(l))==A_INFINITESIMAL)
+				io1+=IntegerValue(CompoundArg2(ListFirst(l)));
+	}
 	
 	l=ConsumeCompoundArg(a1,1);
 	FreeAtomic(a1);
 	a1=l;
+	
+	for(l2=a1;l2;l2=ListTail(l2))
+	{
+		Term m11=ListFirst(l2);
+		io2=0;
+		for(l=CompoundArgN(m11,3);l;l=ListTail(l))
+		{
+			Term prp=0;
+			if(CompoundName(ListFirst(l))==OPR_PARAMETER)
+					prp=GetAtomProperty(CompoundArg2(ListFirst(l)),A_INFINITESIMAL);
+			if(prp && IntegerValue(CompoundArg1(prp))>0)
+					io2+=IntegerValue(CompoundArg1(prp));
+			if(CompoundName(ListFirst(l))==A_INFINITESIMAL)
+					io2+=IntegerValue(CompoundArg2(ListFirst(l)));
+		}
+		if(io1+io2>infi_order)
+		{
+			FreeAtomic(ListFirst(l2));
+			ChangeList(l2,0);
+			rmn++;
+		}
+	}
+	
+	if(rmn)
+		do
+		{
+			for(l=a1;l;l=ListTail(l))
+				if(ListFirst(l)==0)
+				{
+					a1=CutFromList(a1,l);
+					break;
+				}
+		}
+		while(l);
 	
 	num1=IntegerValue(ConsumeCompoundArg(m1,1));
 	den1=IntegerValue(ConsumeCompoundArg(m1,2));
@@ -215,15 +262,63 @@ static List mk_let(Term m1, List cut, Term a1)
 
 static List mk_let_d(Term m1,  Term a1)
 	{
-	List l;
+	List l,l2;
 	List lb;
 	List sd;
 	int num1,den1;
+	int io1=0,io2=0,rmn=0;
+	
+	for(l=CompoundArgN(m1,3);l;l=ListTail(l))
+	{
+		Term prp=0;
+		if(CompoundName(ListFirst(l))==OPR_PARAMETER)
+				prp=GetAtomProperty(CompoundArg2(ListFirst(l)),A_INFINITESIMAL);
+		if(prp && IntegerValue(CompoundArg1(prp))>0)
+				io1+=IntegerValue(CompoundArg1(prp));
+		if(CompoundName(ListFirst(l))==A_INFINITESIMAL)
+				io1+=IntegerValue(CompoundArg2(ListFirst(l)));
+	}
 
 
 	l=ConsumeCompoundArg(a1,1);
 	FreeAtomic(a1);
 	a1=l;
+
+
+	for(l2=a1;l2;l2=ListTail(l2))
+	{
+		Term m11=ListFirst(l2);
+		io2=0;
+		for(l=CompoundArgN(m11,3);l;l=ListTail(l))
+		{
+			Term prp=0;
+			if(CompoundName(ListFirst(l))==OPR_PARAMETER)
+					prp=GetAtomProperty(CompoundArg2(ListFirst(l)),A_INFINITESIMAL);
+			if(prp && IntegerValue(CompoundArg1(prp))>0)
+					io2+=IntegerValue(CompoundArg1(prp));
+			if(CompoundName(ListFirst(l))==A_INFINITESIMAL)
+					io2+=IntegerValue(CompoundArg2(ListFirst(l)));
+		}
+		if(io1+io2>infi_order)
+		{
+			FreeAtomic(ListFirst(l2));
+			ChangeList(l2,0);
+			rmn++;
+		}
+	}
+	
+	if(rmn)
+		do
+		{
+			for(l=a1;l;l=ListTail(l))
+				if(ListFirst(l)==0)
+				{
+					a1=CutFromList(a1,l);
+					break;
+				}
+		}
+		while(l);
+
 	
 	num1=IntegerValue(ConsumeCompoundArg(m1,1));
 	den1=IntegerValue(ConsumeCompoundArg(m1,2));
@@ -383,12 +478,13 @@ static List s_l_1(Term m1)
 			
 			
 			
-
+static int slrl=0;
 
 List SetLets(List l)
 	{
 	List l1,lr;
 	lr=NewList();
+	slrl++;
 	l1=l;
 	while(!is_empty_list(l1))
 		{
@@ -396,6 +492,36 @@ List SetLets(List l)
 		l1=ListTail(l1);
 		}
 	RemoveList(l);
+	
+	slrl--;
+	if(slrl==0)
+	{
+		for(l1=lr;l1;l1=ListTail(l1))
+		{
+			List l2,sl=ConsumeCompoundArg(ListFirst(l1),3);
+			int ch=0;
+			for(l2=sl;l2;l2=ListTail(l2))
+				if(CompoundName(ListFirst(l2))==A_INFINITESIMAL)
+				{
+					FreeAtomic(ListFirst(l2));
+					ChangeList(l2,0);
+					ch++;
+				}
+			if(ch)
+			do
+			{
+				for(l2=sl;l2;l2=ListTail(l2))
+				if(ListFirst(l2)==0)
+				{
+					sl=CutFromList(sl,l2);
+					break;
+				}
+			} while(l2);
+			SetCompoundArg(ListFirst(l1),3,sl);
+		}
+	}
+						
+		
 	lr=a1l_rem_inf(lr);
 	return lr;
 	}

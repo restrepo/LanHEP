@@ -16,7 +16,7 @@ char *InputDirectory  = /*"/home/semenov/lanhep/mdl/"*/ NULL;
 char *InputFile = NULL;
 int  VerbMode = 0;
 char *InitFile = "lhep.rc";
-int  TexOutput = 0, FAOutput=0, FAver=4, UFOutput=0;
+int  TexOutput = 0, FAver=4;
 int  ForsedRedCol = 0;
 int	 NoColors = 0;
 int WriteColors=0;
@@ -27,6 +27,32 @@ int  opAbbrVrt=0, opAbbArr=0;
 int remove_rc=0;
 int opRemDotWithFerm=1;
 int MicroOmega=0;
+
+#ifdef CompHEP
+int CompOutput=1;
+#else
+int CompOutput=0;
+#endif
+
+#ifdef CalcHEP
+int CalcOutput=1;
+#else
+int CalcOutput=0;
+#endif
+
+#ifdef FeynArts
+int FAOutput=1;
+#else
+int FAOutput=0;
+#endif
+
+#ifdef UFO
+int UFOutput=1;
+#else
+int UFOutput=0;
+#endif
+
+
 
 int end_with_tty=0;
 
@@ -313,6 +339,33 @@ static void sigsegv(int sig)
 	}
 
 
+static void setoutput(int t)
+{
+	CompOutput=0;
+	CalcOutput=0;
+	FAOutput=0;
+	switch(t)
+	{
+		case 1:
+			CompOutput=1;
+			break;
+		case 2:
+			CalcOutput=1;
+			break;
+		case 3:
+			FAOutput=1;
+			break;
+		case 4:
+			TexOutput=1;
+			break;
+		case 5:
+			UFOutput=1;
+			break;
+		default:
+			puts("internal error (mainso)");
+	}
+}
+	
 extern Atom llparam;
 static void exv(int, char **);
 
@@ -362,18 +415,33 @@ int main(int argc, char **argv, char **env)
 			VerbMode=3;
 			continue;
 			}
-		if(strcmp(argv[i],"-c4")==0)
+		if(strcmp(argv[i],"-c4")==0||
+			strcmp(argv[i],"-co")==0||
+			strcmp(argv[i],"-CompHEP")==0)
 			{
+			setoutput(1);
 			ChepVersion=4;
 			continue;
 			}	
 		if(strcmp(argv[i],"-c3")==0)
 			{
+			setoutput(1);
 			ChepVersion=3;
 			continue;
 			}	
+		if(strcmp(argv[i],"-calchep")==0||
+		   strcmp(argv[i],"-CalcHEP")==0||
+		   strcmp(argv[i],"-ca")==0)
+			{
+			setoutput(2);
+			eval_vrt_len=2;
+			opNoDummies=1;
+			eval_vrt_more=1;
+			continue;
+			}
 		if(strcmp(argv[i],"-mOmega")==0)
 			{
+			setoutput(2);
 			ChepVersion=4;
 			MicroOmega=1;
 			continue;
@@ -400,29 +468,29 @@ int main(int argc, char **argv, char **env)
 			}
 		if(strcmp(argv[i],"-tex")==0)
 			{
-			TexOutput=1;
+			setoutput(4);
 			opSplitCol1=0;
 			continue;
 			}
-		if(strcmp(argv[i],"-feynarts")==0 || strcmp(argv[i],"-FeynArts")==0)
+		if(strcmp(argv[i],"-fa4")==0)
 			{
-			FAOutput=1;
+			setoutput(3);
 			opSplitCol1=0;
 			opSplitCol2=0;
 			continue;
 			}
-		if(strcmp(argv[i],"-feynarts6")==0 || strcmp(argv[i],"-FeynArts6")==0 ||
-				strcmp(argv[i],"-fa6")==0)
+		if(strcmp(argv[i],"-feynarts")==0 || strcmp(argv[i],"-FeynArts")==0 ||
+				strcmp(argv[i],"-fa6")==0||strcmp(argv[i],"-fa")==0)
 			{
-			FAOutput=1;
+			setoutput(3);
 			FAver=6;
 			opSplitCol1=0;
 			opSplitCol2=0;
 			continue;
 			}
-		if(strcmp(argv[i],"-uf")==0 || strcmp(argv[i],"-UF")==0)
+		if(strcmp(argv[i],"-ufo")==0 || strcmp(argv[i],"-UF")==0)
 			{
-			UFOutput=1;
+			setoutput(5);
 			opSplitCol1=0;
 			opSplitCol2=0;
 			continue;
@@ -535,6 +603,8 @@ int main(int argc, char **argv, char **env)
 				i++;
 				continue;
 			}
+			opNoDummies=0;
+			eval_vrt_more=0;
 			sscanf(argv[++i],"%d",&eval_vrt_len);
 			if(eval_vrt_len==2)
 			{
@@ -589,6 +659,18 @@ int main(int argc, char **argv, char **env)
 			opMaxiLegs=4;
 	}
 
+	if(CompOutput==0 && CalcOutput==0 && TexOutput==0 &&
+			FAOutput==0 && UFOutput==0)
+	{
+		puts("Error: output format is not set. Use command line options:");
+		puts("\t-CompHEP or -co for CompHEP format;");
+		puts("\t-CalcHEP or -ca for CalcHEP format;");
+		puts("\t-FeynArts or -fa for FeynArts format;");
+		puts("\t-ufo for UFO format;");
+		puts("\t-tex for LaTeX format.");
+		return 0;
+	}
+	
 	if(UFOutput)
 	{
 		FAOutput=1;
@@ -608,6 +690,16 @@ int main(int argc, char **argv, char **env)
 		SetKeyFromArg("FeynArts=1");
 	else
 		SetKeyFromArg("FeynArts=0");
+
+	if(UFOutput)
+		SetKeyFromArg("UFO=1");
+	else
+		SetKeyFromArg("UFO=0");
+
+	if(CalcOutput)
+		SetKeyFromArg("CalcHEP=1");
+	else
+		SetKeyFromArg("CalcHEP=0");
 		
 	if(InputDirectory==NULL)
 		{
@@ -623,7 +715,7 @@ int main(int argc, char **argv, char **env)
 	else
 		{
 		printf(
-"Welcome to LanHEP                                Version 3.1.1  (Nov 08 2010)\n");
+"Welcome to LanHEP                                Version 3.1.5  (Oct 17 2011)\n");
 		/*
 		log_file=fopen("lhep.log","w");
 		if(log_file==NULL)

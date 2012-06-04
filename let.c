@@ -212,6 +212,8 @@ static void alg1_set_cos0(Term a1)
 	
 	}
 	
+extern void alg1_inf_wild(Term);
+
 Term ProcLet(Term t, Term ind)
 	{
 	Term t1,nm,sub,kl=0;
@@ -299,16 +301,21 @@ Term ProcLet(Term t, Term ind)
 	if(GetAtomProperty(nm,A_KEEP_LETS))
 	{
 		Term prp;
-		kl=ExprTo1kl(CopyTerm(sub));
+		kl=ExprTo1kl(sub);
 		if(kl==0)
 			return 0;
+		sub=CopyTerm(kl);
 		prp=GetAtomProperty(nm,A_KEEP_LETS);
 		SetCompoundArg(prp,1,kl);
 	}
+	else
+	{
 	
 	sub=ExprTo1(sub);
 	
 	alg1_set_cos0(sub);
+	alg1_inf_wild(sub);
+	}
 	
 	if(sub==0)
 		return 0;

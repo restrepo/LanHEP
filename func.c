@@ -2,7 +2,7 @@
 
 
 Term wdbg(Term,Term), ProcslhaRead(Term, Term), ProcLHA(Term,Term),
-		ProcExtlib(Term, Term), ProcCpart(Term, Term);
+		ProcExtlib(Term, Term), ProcCpart(Term, Term), ProcPrm(Term, Term);
 
 static struct
 	{
@@ -114,6 +114,7 @@ static struct
 		{ "lha", 0, ProcLHA},
 		{ "extlib",0,ProcExtlib},
 		{ "cpart",0,ProcCpart},
+		{ "prm", 0, ProcPrm},
 		{ "date", 0,    ProcessDate }
 		};
 

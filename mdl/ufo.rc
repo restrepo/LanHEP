@@ -1,0 +1,23 @@
+% Definition of file headers in UFO format.
+
+option UFOParaHdr=['from object_library import all_parameters, Parameter',
+ 'from function_library import complexconjugate, re, im, csc, sec, acsc, asec'].
+ 
+option UFOPartHdr=['from object_library import all_particles, Particle'].
+
+option UFOVertHdr=['from object_library import all_vertices, Vertex',
+	'import particles as P',
+	'import couplings as C',
+	'import lorentz as L'].
+	
+option UFOLoreHdr=['from object_library import all_lorentz, Lorentz',
+'from function_library import complexconjugate, re, im, csc, sec, acsc, asec'].
+
+option UFOCoupHdr=['from object_library import all_couplings, Coupling',
+'from function_library import complexconjugate, re, im, csc, sec, acsc, asec'].
+
+
+%
+% Use lha statement for SLHA notation for external parameters:
+% lha Mb=SMINPUTS(5), Mtop=SMINPUTS(6), MZ=SMINPUTS(4), Vud=VCKM(1,1).
+%

@@ -778,6 +778,19 @@ void alg1_derivp(Term a1)
 	SetCompoundArg(a1,1,l2);
 }
 
+static Term xNewAtom(char *c, int n)
+{
+	int d=1;
+	for(n=0;c[n];n++)
+		if(!( (n==0&&c[n]=='-')||isdigit(c[n] )))
+			d=0;
+	if(d==0)
+		return NewAtom(c,0);
+	sscanf(c,"%d",&n);
+	return NewInteger(n);
+}
+
+
 static void repla(Term t, char c, Term r)
 {
 	int i;
@@ -817,14 +830,14 @@ static void repla(Term t, char c, Term r)
 							continue;
 						cbuf[j]=toupper(AtomValue(r)[0]);
 						strcpy(cbuf+j+1,a+j+2);
-						na=NewAtom(cbuf,0);
+						na=xNewAtom(cbuf,0);
 						SetCompoundArg(t,i,na);
 					}
 					continue;
 				}
 				lr=sWriteTerm(cbuf+j,r);
 				strcpy(cbuf+j+lr,a+j+2);
-				na=NewAtom(cbuf,0);
+				na=xNewAtom(cbuf,0);
 				SetCompoundArg(t,i,na);
 				goto rpt;
 			}
@@ -867,14 +880,14 @@ static void repla(Term t, char c, Term r)
 							continue;
 						cbuf[j]=toupper(AtomValue(r)[0]);
 						strcpy(cbuf+j+1,a+j+2);
-						na=NewAtom(cbuf,0);
+						na=xNewAtom(cbuf,0);
 						ChangeList(t,na);
 					}
 					continue;
 				}
 				lr=sWriteTerm(cbuf+j,r);
 				strcpy(cbuf+j+lr,a+j+2);
-				na=NewAtom(cbuf,0);
+				na=xNewAtom(cbuf,0);
 				ChangeList(t,na);
 				goto rpt2;
 			}
@@ -1103,3 +1116,26 @@ void WriteCpart(int fno, char *name)
 
 	
 }
+
+
+Term ProcPrm(Term t, Term ind)
+{
+	if(!is_compound(t) || CompoundArity(t)!=1)
+	{
+		ErrorInfo(0);
+		puts("prm: bad syntax.");
+		return 0;
+	}
+	if(!is_atom(CompoundArg1(t)))
+	{
+		ErrorInfo(0);
+		puts("prm: argument must be inside quotation marks.");
+		return 0;
+	}
+	
+	SetAtomProperty(CompoundArg1(t),PROP_TYPE,OPR_PARAMETER);
+	SetAtomProperty(CompoundArg1(t),A_DUMMY_PRM,NewInteger(0));
+	return CompoundArg1(t);
+	
+}
+

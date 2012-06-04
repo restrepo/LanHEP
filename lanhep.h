@@ -298,7 +298,7 @@ Term ProcDbgTrig(Term, Term);
 extern char *ModelName;
 extern int ModelNumber;
 extern List DefaultIndex;
-extern int  TexOutput, FAOutput;
+extern int  TexOutput, FAOutput, CalcOutput, CompOutput;
 extern int  ForsedRedCol;
 extern int MicroOmega;
 

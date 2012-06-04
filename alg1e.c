@@ -222,4 +222,103 @@ static Term SetInd_e(Term t, Term *ir, Term *is)
 	return t;
 	}
 	
-		
+static int infno[10];
+	
+static void sel_inf(Term w, int o)
+{
+	List l1,l2,l3;
+	for(l1=CompoundArg2(w);l1;l1=ListTail(l1))
+	{
+		Term a1=ListFirst(l1);
+		int ch=0;
+		for(l2=CompoundArg1(a1);l2;l2=ListTail(l2))
+		{
+			int po=0;
+			for(l3=CompoundArgN(ListFirst(l2),3);l3;l3=ListTail(l3))
+			{
+				Term prp=0;
+				if(CompoundName(ListFirst(l3))==OPR_PARAMETER)
+					prp=GetAtomProperty(CompoundArg2(ListFirst(l3)),
+							A_INFINITESIMAL);
+				if(prp && IntegerValue(CompoundArg1(prp))>0)
+					po+=IntegerValue(CompoundArg1(prp));
+			}
+			if(po>9)
+				po=9;
+			if(o==-1)
+				infno[po]++;
+			else if(po!=o)
+			{
+				FreeAtomic(ListFirst(l2));
+				ChangeList(l2,0);
+				ch++;
+			}
+		}
+		if(ch)
+		{
+			l2=ConsumeCompoundArg(a1,1);
+			do
+			{
+				for(l3=l2;l3;l3=ListTail(l3))
+				if(ListFirst(l3)==0)
+				{
+					l2=CutFromList(l2,l3);
+					break;
+				}
+			} while(l3);
+			SetCompoundArg(a1,1,l2);
+					
+		}
+	}
+}
+
+void alg1_inf_wild(Term sub)
+{
+	List l,l1,nl;
+	Term w;
+	int i,no=0;
+	l=CompoundArg1(sub);
+	if(ListLength(l)!=1)
+		return;
+	l1=CompoundArgN(ListFirst(l),3);
+	if(l1==0 || ListLength(l1)!=1 || !is_compound(ListFirst(l1))
+			|| CompoundName(ListFirst(l1))!=OPR_WILD)
+		return;
+	w=ListFirst(l1);
+	for(l=CompoundArg1(w);l;l=ListTail(l))
+		if(CompoundName(ListFirst(l))==OPR_WILD)
+			no++;
+	if(no!=1)
+		return;
+	
+	for(i=0;i<10;i++)
+		infno[i]=0;
+	sel_inf(w,-1);
+	no=0;
+	for(i=1;i<10;i++)
+		if(infno[i])
+			no++;
+	if(no==0)
+		return;
+	
+	nl=0;
+	for(i=1;i<10;i++)
+	{
+		Term nw;
+		if(infno[i]==0)
+			continue;
+		nw=CopyTerm(ListFirst(CompoundArg1(sub)));
+		sel_inf(ListFirst(CompoundArgN(nw,3)),i);
+		AppendLast(CompoundArgN(nw,3),
+				MakeCompound2(A_INFINITESIMAL,0,NewInteger(i)));
+		nl=AppendLast(nl,nw);
+	}
+	sel_inf(w,0);
+	ConcatList(CompoundArg1(sub),nl);
+	
+
+	/*DumpList(CompoundArg1(sub));
+	puts("\n");*/	
+	
+}
+	

@@ -533,6 +533,29 @@ void alg2_eval_more(Term a2)
 	
 		FreeAtomic(l1);
 		evll[i]=AppendLast(evll[i],MakeCompound2(OPR_EQSIGN,newprm,l1c));
+		if(GetAtomProperty(newprm,A_ANTI))
+		{
+			List l4,l5, l1cc=CopyTerm(l1c);
+			int j;
+			for(l4=l1cc;l4;l4=ListTail(l4))
+				for(l5=CompoundArg2(ListFirst(l4));l5;l5=ListTail(l5))
+				{
+					Atom p,ap;
+					p=CompoundArg1(ListFirst(l5));
+					if(p==A_I)
+					{
+						int f=IntegerValue(CompoundArg1(ListFirst(l4)));
+						SetCompoundArg(ListFirst(l4),1,NewInteger(-f));
+						continue;
+					}
+					ap=GetAtomProperty(p,A_ANTI);
+					if(ap)
+						SetCompoundArg(ListFirst(l5),1,ap);
+				}
+			j=b_value(l1cc);
+			evll[j]=AppendLast(evll[j],MakeCompound2(OPR_EQSIGN,
+					GetAtomProperty(newprm,A_ANTI),l1cc));	
+		}
 
 addprm:
 		

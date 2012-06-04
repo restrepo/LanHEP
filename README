@@ -1,11 +1,18 @@
-TODO: Official seesaw radiative model is in branck seesaw. Please clean relevant branches according Jose's mail 
+To create the executable file  lhep, type 'make' with default model format: 
+make Output=CompHEP
+    - for CompHEP default output format;
+make Output=CalcHEP
+    - for CalcHEP default output format;
+make Output=FeynArts
+    - for FeynArts 6.x default output format;
 
-To create the executable file  lhep , type 'make`. When the LanHEP is complied,
-remove object files by typing 'make clean`. The archive also contains 
-the directory  mdl  with startup file and examples for several physical
-models. Add the directory containing LanHEP to your PATH environment variable.
-Than LanHEP can be started from any other directory, it can find automatically
-files from the  mdl  directory.
+In any case, the output format can be specified by the command line
+option (-ca for CalcHEP; -co for CompHEP; -fa for FeynArts; -tex for LaTeX). 
+The archive also contains the directory  mdl  with startup file and 
+examples for several physical models. Add the directory containing 
+LanHEP to your PATH environment variable. Then LanHEP can be started 
+from any other directory, it can find automatically files from the  
+'mdl'  directory.
 
 Files in this directory:
 

@@ -272,6 +272,31 @@ int ProcClass(Term cl, Term ind)
 	return 0;	
 }
 
+
+void cls_set_em(void)
+{
+	int i;
+	for(i=1;i<cls_no;i++)
+	{
+		Term ch;
+		List l;
+		ch=GetAtomProperty(ListFirst(cls_membs[i]),A_EM_CHARGE);
+		for(l=ListTail(cls_membs[i]);l;l=ListTail(l))
+			if(!EqualTerms(GetAtomProperty(ListFirst(cls_membs[i]),
+						A_EM_CHARGE),ch))
+		{
+			printf("Error: SetEM: particles in class %s have different charge\n"
+					, AtomValue(cls_names[i]));
+		}
+		SetAtomProperty(cls_names[i],A_EM_CHARGE,CopyTerm(ch));
+		/*WriteTerm(cls_names[i]);
+		printf(" -> ");
+		WriteTerm(ch);
+		puts("");*/
+	}
+}
+
+
 void cls_wrt_nms(FILE *f, List cpml)
 {
 	List l1;

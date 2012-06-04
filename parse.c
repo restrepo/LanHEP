@@ -24,8 +24,8 @@ static Term read_term(Atomic *stop)
 	funame=NewAtom("fu",0);
 	funct=NewFunctor(funame,4);
 	c_a=ReadAtomic();
-	
-	
+
+
 	while(1)
 		{
 		int prior;
@@ -91,7 +91,7 @@ static Term read_term(Atomic *stop)
 					phase=0;
 				goto lab1;
 				}
-				
+
 			if(c_a==A_RBRA)
 				{
 				Atom stop, newa;
@@ -111,7 +111,7 @@ static Term read_term(Atomic *stop)
 				list=AppendLast(list,tt);
 				goto lab1;
 				}
-				
+
 			if(c_a==A_FBRA)
 				{
 				Atom stop, newa, fu1;
@@ -135,7 +135,7 @@ static Term read_term(Atomic *stop)
 				list=AppendLast(list,tt);
 				goto lab1;
 				}
-				
+
 			if(c_a==A_QBRA)
 				{
 				Atom stop, newa/*, fu1*/;
@@ -160,8 +160,8 @@ static Term read_term(Atomic *stop)
 				list=AppendLast(list,tt);
 				goto lab1;
 				}
-			
-			
+
+
 			if(n_a==A_RBRA)
 			{
 				Atom stop;
@@ -170,14 +170,14 @@ static Term read_term(Atomic *stop)
 				int arity=0;
 				List al;
 				al=0;
-				
+
 				l_a=c_a;
 				c_a=ReadAtomic();
 				stop=A_COMMA;
 				while(stop==A_COMMA)
 					{ al=AppendFirst(al,read_term(&stop));
 					  arity++;
-					  if(arity==32)
+					  if(arity==100)
 					  		{ 
 					  		sprintf(parse_err_mess,"too many arguments for '%s'.",
 								AtomValue(l_a));
@@ -194,34 +194,34 @@ static Term read_term(Atomic *stop)
 					}
 				fu1=NewFunctor(l_a,arity);
 				tt1=NewCompound(fu1);
-				
+
 				while(al!=0)
 					{
 					SetCompoundArg(tt1,arity,ListFirst(al));
 					al=ListTail(al);
 					arity--;
 					}
-					
+
 				tt=NewCompound(funct);
 				SetCompoundArg(tt,1,tt1);
 				SetCompoundArg(tt,2,OP_NONE);
 				SetCompoundArg(tt,3,NewInteger(0));
 				list=AppendLast(list,tt);
 				goto lab1;
-			}	
-			
+			}
+
 			{
 				Term tt;
 				tt=NewCompound(funct);
-				
+
 				SetCompoundArg(tt,1,c_a);
 				SetCompoundArg(tt,2,OP_NONE);
 				SetCompoundArg(tt,3,NewInteger(0));
 				list=AppendLast(list,tt);
 				goto lab1;
 			}
-				
-				
+
+
 			}
 		else		/* waiting for end/xfx/xf */
 			{
@@ -262,12 +262,12 @@ static Term read_term(Atomic *stop)
 				list=AppendLast(list,tt);
 				goto lab1;
 				}
-			
+
 			sprintf(parse_err_mess,"operator expected %s <HERE> %s.",
 					AtomValue(l_a),AtomValue(c_a));
 			longjmp(parse_jmp_buf,10);
-			exit(-2);			
-			}	
+			exit(-2);
+			}
 		lab1:
 			l_a=c_a;
 			c_a=ReadAtomic();
@@ -317,23 +317,23 @@ static void rpl_dollar(Term t)
 }
 
 
-		
+
 Term ReadTerm(void)
 	{
 	int fline;
 	int err;
 	Term  a;
 	Atom point;
-	
+
 	point=A_POINT;
 	a=ReadAtomic();
 	if(a==0)
 		return a;
 	UnreadAtomic(a);
 	fline=CurrentInputLine();
-	
+
 	err=setjmp(parse_jmp_buf);
-	
+
 	if(err!=0)
 		{
 		SkipInputLine();
@@ -344,9 +344,9 @@ Term ReadTerm(void)
 		else
 			return 1;
 		}
-		
+
 	a = read_term(&point);
-	
+
 	if(point!=A_POINT)
 		{
 		sprintf(parse_err_mess, "expression ended with '%s').",AtomValue(point));
@@ -381,7 +381,7 @@ static Term list_to_term(List list)
 		return ret;
 		}
 
-	
+
 /*	l1=list;
 	while(l1!=0)
 		{
@@ -390,12 +390,12 @@ static Term list_to_term(List list)
 		l1=ListTail(l1);
 		}
 	puts("------------------------------------------");
-*/	
-	
+*/
+
 	/*  Find min prior */
-	
+
 	l1=list;
-	
+
 	while(l1!=0)
 		{
 		int pri;
@@ -404,23 +404,23 @@ static Term list_to_term(List list)
 		if(pri>minprior) minprior=pri;
 		l1=ListTail(l1);
 		}
-	
+
 	l1=list;
-	
-	
+
+
 	while(l1!=0)
 		{
 		if(IntegerValue(CompoundArgN(ListFirst(l1),3))==minprior)
 			break;
 		l1=ListTail(l1);
 		}
-		
+
 	oper=CompoundArgN(ListFirst(l1),1);
 	oper_type=CompoundArgN(ListFirst(l1),2);
 	oper_assoc=CompoundArgN(ListFirst(l1),4);
 	l1=ListTail(l1);
-	
-	
+
+
 	while(l1!=0)
 		{
 		if(IntegerValue(CompoundArgN(ListFirst(l1),3))==minprior)
@@ -440,10 +440,10 @@ static Term list_to_term(List list)
 			}
 		l1=ListTail(l1);
 		}
-		
-		
+
+
 	l1=list;
-	
+
 	while(l1!=0)
 		{
 		if(IntegerValue(CompoundArgN(ListFirst(l1),3))==minprior)
@@ -456,16 +456,16 @@ static Term list_to_term(List list)
 				 oper_assoc==OP_FX || oper_assoc==OP_FY)
 				break;
 			}
-			
+
 		l1=ListTail(l1);
 		}
-		
+
 	l1=list;
-	
+
 	l1=ListSplit(l1,lop,&l2);
-	
-	FreeList(lop);	
-	
+
+	FreeList(lop);
+
 	if(oper_type==OP_PREFIX)
 		{
 		Functor ff;
@@ -495,7 +495,7 @@ static Term list_to_term(List list)
 			return list_to_term(l1);
 			}
 		}
-		
+
 		if(oper_type==OP_POSTFIX)
 		{
 		Functor ff;
@@ -525,7 +525,7 @@ static Term list_to_term(List list)
 			return list_to_term(l2);
 			}
 		}
-	
+
 	if(oper_type==OP_INFIX)
 		{
 		Functor ff;
@@ -550,15 +550,15 @@ static Term list_to_term(List list)
 		SetCompoundArg(tt,2,list_to_term(l2));
 		return tt;
 		}
-	
-	puts("???????????????????????");	
+
+	puts("???????????????????????");
 	printf("\t\t:   ");
 	DisplayTerm(ListFirst(lop));
 	puts("");
 	if(l1!=0)  list_to_term(l1);
 	if(l2!=0)  list_to_term(l2);
-	
-	
+
+
 	return 0;
 	}
 
@@ -575,8 +575,8 @@ static Term read_displ_term(Atomic *stop)
 	funame=NewAtom("fu",0);
 	funct=NewFunctor(funame,4);
 	c_a=ReadAtomic();
-	
-	
+
+
 	while(1)
 		{
 
@@ -616,7 +616,7 @@ static Term read_displ_term(Atomic *stop)
 				list=c_a;
 				goto lab1;
 				}
-				
+
 			if(c_a==A_RBRA)
 				{
 				Atom stop, newa;
@@ -632,14 +632,14 @@ static Term read_displ_term(Atomic *stop)
 				list=newa;
 				goto lab1;
 				}
-				
+
 			if(c_a==A_FBRA)
 				{
 				sprintf(parse_err_mess,"unexpected '{'.");
 				longjmp(parse_jmp_buf,20);
 				exit(-2);
 				}
-				
+
 			if(0)
 				{
 				Atom stop, newa/*, fu1*/;
@@ -664,14 +664,14 @@ static Term read_displ_term(Atomic *stop)
 				list=AppendLast(list,tt);
 				goto lab1;
 				}
-			
-			
+
+
 			if(c_a==A_QBRA)
 			{
 				Atom stop;
 				List al;
 				al=0;
-				
+
 				stop=A_COMMA;
 				while(stop==A_COMMA)
 					{ 
@@ -684,11 +684,11 @@ static Term read_displ_term(Atomic *stop)
 					longjmp(parse_jmp_buf,22);
 					exit(-2);
 					}
-					
+
 				list=al;
 				goto lab1;
 			}
-			
+
 			if(n_a==A_RBRA)
 			{
 				Atom stop;
@@ -697,7 +697,7 @@ static Term read_displ_term(Atomic *stop)
 				int arity=0;
 				List al;
 				al=0;
-				
+
 				l_a=c_a;
 				c_a=ReadAtomic();
 				stop=A_COMMA;
@@ -705,7 +705,7 @@ static Term read_displ_term(Atomic *stop)
 					{
 					al=AppendFirst(al,read_displ_term(&stop));
 					  arity++;
-					  if(arity==32)
+					  if(arity==100)
 					  		{ 
 					  		sprintf(parse_err_mess,"too many arguments for '%s'.",
 								AtomValue(l_a));
@@ -722,22 +722,22 @@ static Term read_displ_term(Atomic *stop)
 					}
 				fu1=NewFunctor(l_a,arity);
 				tt1=NewCompound(fu1);
-				
+
 				while(al!=0)
 					{
 					SetCompoundArg(tt1,arity,ListFirst(al));
 					al=ListTail(al);
 					arity--;
 					}
-					
+
 				list=tt1;
 				goto lab1;
-			}	
-			
+			}
+
 			list=c_a;
 			goto lab1;
-				
-				
+
+
 			}
 		else		/* waiting for end/xfx/xf */
 			{
@@ -755,8 +755,8 @@ static Term read_displ_term(Atomic *stop)
 			sprintf(parse_err_mess,"operator expected %s <HERE> %s.",
 					AtomValue(l_a),AtomValue(c_a));
 			longjmp(parse_jmp_buf,25);
-			exit(-2);			
-			}	
+			exit(-2);
+			}
 		lab1:
 			l_a=c_a;
 			c_a=ReadAtomic();
@@ -767,24 +767,24 @@ static Term read_displ_term(Atomic *stop)
 		}
 	}
 
-	
-	
+
+
 Term ReadDisplTerm(void)
 	{
 	int fline, lline;
 	int err;
 	Term  a;
 	Atom point;
-	
+
 	point=A_POINT;
 	a=ReadAtomic();
 	if(a==0)
 		return a;
 	UnreadAtomic(a);
 	fline=CurrentInputLine();
-	
+
 	err=setjmp(parse_jmp_buf);
-	
+
 	if(err!=0)
 		{
 		SkipInputLine();
@@ -801,9 +801,9 @@ Term ReadDisplTerm(void)
 		else
 			return 1;
 		}
-		
+
 	a = read_displ_term(&point);
-	
+
 	if(point!=A_POINT)
 		{
 		sprintf(parse_err_mess, "expression ended with '%s').",AtomValue(point));

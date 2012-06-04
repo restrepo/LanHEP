@@ -123,6 +123,7 @@ static char *convname(Atom a)
 	return cnbuf;
 }
 		
+extern List UFOparth,UFOverth;
 
 void UF_write_lagr(List l)
 {
@@ -140,18 +141,18 @@ void UF_write_lagr(List l)
 		sprintf(cbuf,"particles.py");
 	f=fopen(cbuf,"w");
 	
-	fprintf(f,"%% \n\tLanHEP output produced at ");
+	fprintf(f,"%% \n%%\tLanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
-	fprintf(f,"\tfrom the file '%s'\n",eff_infile);
+	fprintf(f,"%%\tfrom the file '%s'\n",eff_infile);
 	if(ModelName)
 		fprintf(f,"%%\tModel named '%s'\n",ModelName);
 	fprintf(f,"\n\n");
 	
 	
-	
-	fprintf(f,"from __future__ import division\n");
-	fprintf(f,"from object_library import all_particles, Particle\n\n");
+	for(l1=UFOparth;l1;l1=ListTail(l1))
+		fprintf(f,"%s\n",AtomValue(ListFirst(l1)));
+	fprintf(f,"\n");
 	
 	for(l1=all_prtc_list();l1;l1=ListTail(l1))
 	{
@@ -543,10 +544,10 @@ DumpList(gkl);
 		sprintf(cbuf,"vertices.py");
 	f=fopen(cbuf,"w");
 	
-	fprintf(f,"%% \n\tLanHEP output produced at ");
+	fprintf(f,"%% \n%%\tLanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
-	fprintf(f,"\tfrom the file '%s'\n",eff_infile);
+	fprintf(f,"%%\tfrom the file '%s'\n",eff_infile);
 	if(ModelName)
 		fprintf(f,"%%\tModel named '%s'\n",ModelName);
 	fprintf(f,"\n\n");
@@ -555,11 +556,9 @@ DumpList(gkl);
 	inf_decl_hc(f);
 	prm_decl_hc(f,l);
 */
-	fprintf(f,"from object_library import all_vertices, Vertex\n");
-	fprintf(f,"import particles as P\n");
-	fprintf(f,"import couplings as C\n");
-	fprintf(f,"import lorentz as L\n\n");
-
+	for(l1=UFOverth;l1;l1=ListTail(l1))
+	fprintf(f,"%s\n",AtomValue(ListFirst(l1)));
+	fprintf(f,"\n");
 		
 	
 	for(l1=l;l1;l1=ListTail(l1))
@@ -1165,7 +1164,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"T(%d,%d,\\'a1\\')*T(%d,\\'a1\\',%d)",
+			sno+=fprintf(of,"T(%d,%d,-1)*T(%d,-1,%d)",
 					il3+1,il1+1,il4+1,il2+1);
 			if(sno>60 && ListTail(l) && (ListTail(l)!=l2||ListTail(ListTail(l))))
 				 {fprintf(of,"*\n\t\t");sno=15;}
@@ -1183,7 +1182,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(3)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"T(\\'a1\\',%d,%d)*T(\\'a1\\',%d,%d)",
+			sno+=fprintf(of,"T(-1,%d,%d)*T(-1,%d,%d)",
 					il1+1,il2+1,il3+1,il4+1);
 			if(sno>60 && ListTail(l) && (ListTail(l)!=l2||ListTail(ListTail(l)))) 
 				{fprintf(of,"*\n\t\t");sno=15;}
@@ -1243,7 +1242,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"f(%d,%d,\\'a1\\')*f(%d,%d,\\'a1\\')",
+			sno+=fprintf(of,"f(%d,%d,-1)*f(%d,%d,-1)",
 					il1+1,il2+1,il3+1,il4+1);
 			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
@@ -1264,7 +1263,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"f(%d,%d,\\'a1\\')*d(%d,%d,\\'a1\\')",
+			sno+=fprintf(of,"f(%d,%d,-1)*d(%d,%d,-1)",
 					il1+1,il2+1,il3+1,il4+1);
 			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
@@ -1323,7 +1322,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"d(%d,%d,\\'a1\\')*f(%d,%d,\\'a1\\')",il1+1,il2+1,il3+1,il4+1);
+			sno+=fprintf(of,"d(%d,%d,-1)*f(%d,%d,-1)",il1+1,il2+1,il3+1,il4+1);
 			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
 			ChangeList(l2,0);
@@ -1343,7 +1342,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			for(i=0;i<4;i++) if(in4==pind[i]) break; il4=i;
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
-			sno+=fprintf(of,"d(%d,%d,\\'a1\\')*d(%d,%d,\\'a1\\')",il1+1,il2+1,il3+1,il4+1);
+			sno+=fprintf(of,"d(%d,%d,-1)*d(%d,%d,-1)",il1+1,il2+1,il3+1,il4+1);
 			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
 			ChangeList(l2,0);
@@ -1366,7 +1365,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 	NoQuotes=0;
 }
 
-extern List opFAGS, opFAGE;
+extern List opFAGS, opFAGE, UFOloreh;
 
 void UF_write_gen(void)
 {
@@ -1381,18 +1380,18 @@ void UF_write_gen(void)
 		sprintf(cbuf,"lorentz.py");
 	f=fopen(cbuf,"w");
 	
-	fprintf(f,"%% \n\tLanHEP output produced at ");
+	fprintf(f,"%% \n%%\tLanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
-	fprintf(f,"\tfrom the file '%s'\n",eff_infile);
+	fprintf(f,"%%\tfrom the file '%s'\n",eff_infile);
 	if(ModelName)
 		fprintf(f,"%%\tModel named '%s'\n",ModelName);
 	fprintf(f,"\n\n");
 	
 	
-	
-	fprintf(f,"from object_library import all_lorentz, Lorentz\n");
-	fprintf(f,"from function_library import complexconjugate, re, im, csc, sec, acsc, asec\n\n");
+	for(l1=UFOloreh;l1;l1=ListTail(l1))
+		fprintf(f,"%s\n",AtomValue(ListFirst(l1)));
+	fprintf(f,"\n");
 
 	
 	
@@ -1444,7 +1443,7 @@ void UF_write_gen(void)
 				else if(AtomValue(a1)[0]=='l' && AtomValue(a2)[0]=='m')
 					fprintf(f," P(%s,%s)",AtomValue(a1)+2,AtomValue(a2)+3);
 				else if(AtomValue(a1)[0]=='m' && AtomValue(a2)[0]=='m')
-					{fprintf(f," P(\\'l%d\\',%s)*P(\\'l%d\\',%s)",lin,AtomValue(a1)+3,lin,AtomValue(a2)+3);lin++;}
+					{fprintf(f," P(%d,%s)*P(%d',%s)",-lin,AtomValue(a1)+3,-lin,AtomValue(a2)+3);lin++;}
 				else {printf("Internal error wrtfa02; ");WriteTerm(ListFirst(l3));puts("");}
 				if(ListTail(cc) || nc) fprintf(f,"*");
 			}
@@ -1452,7 +1451,6 @@ void UF_write_gen(void)
 				
 			if(nc)
 			{
-				int sn=1;
 				int su=0;
 				for(l3=nc;l3;l3=ListTail(l3))
 				{
@@ -1466,17 +1464,17 @@ void UF_write_gen(void)
 						if(AtomValue(a)[0]=='l')
 							fprintf(f,"Gamma(%s,",AtomValue(a)+2);
 						else if(AtomValue(a)[0]=='m')
-							{fprintf(f,"P(\\'l%d\\',%s)*Gamma(\\'l%d\\',",lin,lin,AtomValue(a)+3);lin++;}
+							{fprintf(f,"P(%d,%s)*Gamma(%d,",-lin,-lin,AtomValue(a)+3);lin++;}
 						else {puts("Internal error wrtuf03");}
 					}
 					else {puts("Internal error wrtuf04");}
 					if(su==0)
 						fprintf(f,"1,");
 					else
-						fprintf(f,"\\'s%d\\',",sn++);
+					 {fprintf(f,"%d,",-lin);lin++;}
 					if(ListTail(l3))
 					{
-						fprintf(f,"\\'s%d\\')",sn); su=1;
+						fprintf(f,"%d)",-lin); su=1;
 					}
 					else
 						fprintf(f,"2)");

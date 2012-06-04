@@ -51,6 +51,42 @@ static int pcmp(Term mm1, Term mm2)
 				AtomValue(CompoundArg1(ListFirst(m2))));
 }
 	
+static int mlsort(Term m1, Term m2)
+{
+	List l1,l2;
+	l1=CompoundArg2(m1);
+	l2=CompoundArg2(m2);
+	if(ListLength(l1)!=ListLength(l2))
+		return ListLength(l1)-ListLength(l2);
+	for(;l1;l1=ListTail(l1),l2=ListTail(l2))
+	{
+		if(CompoundArg1(ListFirst(l1))!=CompoundArg1(ListFirst(l2)))
+			return strcmp(AtomValue(CompoundArg1(ListFirst(l1))),
+					AtomValue(CompoundArg1(ListFirst(l2))));
+		if(CompoundArg2(ListFirst(l1))!=CompoundArg2(ListFirst(l2)))
+			return IntegerValue(CompoundArg2(ListFirst(l1)))-
+					IntegerValue(CompoundArg2(ListFirst(l2)));
+	}
+	l1=CompoundArgN(m1,3);
+	l2=CompoundArgN(m2,3);
+	if(ListLength(l1)!=ListLength(l2))
+		return ListLength(l1)-ListLength(l2);
+	for(;l1;l1=ListTail(l1),l2=ListTail(l2))
+	{
+		List l3,l4;
+		if(CompoundName(ListFirst(l1))!=CompoundName(ListFirst(l2)))
+			return CompoundName(ListFirst(l1))-CompoundName(ListFirst(l2));
+		if(CompoundArg1(ListFirst(l1))!=CompoundArg1(ListFirst(l2)))
+			return CompoundArg1(ListFirst(l1))-CompoundArg1(ListFirst(l2));
+		l3=CompoundArg2(ListFirst(l1));
+		l4=CompoundArg2(ListFirst(l2));
+		for(;l3;l3=ListTail(l3),l4=ListTail(l4))
+			if(ListFirst(l3)!=ListFirst(l4))
+				return ListFirst(l3)!=ListFirst(l4);
+	}
+	WriteTerm(l1);WriteTerm(l2);puts("");
+	return 0;
+}
 
 void FA_write_lagr(List l, FILE *f)
 {
@@ -127,6 +163,18 @@ void FA_write_lagr(List l, FILE *f)
 					fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 				fprintf(f,"\tMass -> %s,\n",CompoundArgN(p,5)?
 						AtomValue(CompoundArgN(p,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(CompoundArg1(p),A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 				fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(CompoundArg1(g)));
 				fprintf(f,"\tPropagatorType -> GhostDash,\n");
 				fprintf(f,"\tPropagatorArrow -> %s }","Forward");
@@ -146,6 +194,18 @@ void FA_write_lagr(List l, FILE *f)
 					fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 				fprintf(f,"\tMass -> %s,\n",CompoundArgN(p,5)?
 						AtomValue(CompoundArgN(p,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(CompoundArg2(p),A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 				fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(CompoundArg1(g)));
 				fprintf(f,"\tPropagatorType -> GhostDash,\n");
 				fprintf(f,"\tPropagatorArrow -> %s }","Forward");
@@ -173,6 +233,18 @@ void FA_write_lagr(List l, FILE *f)
 						fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 					fprintf(f,"\tMass -> %s,\n",CompoundArgN(p,5)?
 							AtomValue(CompoundArgN(p,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(a,A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 					fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(tnm));
 					fprintf(f,"\tPropagatorType -> %s,\n",
 							col==0?"Sine":"Cycles");
@@ -196,6 +268,18 @@ void FA_write_lagr(List l, FILE *f)
 						fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 					fprintf(f,"\tMass -> %s,\n",CompoundArgN(p,5)?
 							AtomValue(CompoundArgN(p,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(a,A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 					fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(tnm));
 					fprintf(f,"\tPropagatorType -> Straight,\n");
 					fprintf(f,"\tPropagatorArrow -> %s }",
@@ -217,6 +301,18 @@ void FA_write_lagr(List l, FILE *f)
 						fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 					fprintf(f,"\tMass -> %s,\n",CompoundArgN(p,5)?
 							AtomValue(CompoundArgN(p,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(a,A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 					fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(tnm));
 					fprintf(f,"\tPropagatorType -> ScalarDash,\n");
 					fprintf(f,"\tPropagatorArrow -> %s }",
@@ -250,6 +346,18 @@ void FA_write_lagr(List l, FILE *f)
 						fprintf(f,"\tMatrixTraceFactor -> %d,\n",col==1?3:8);
 				fprintf(f,"\tMass -> %s,\n",CompoundArgN(bpp,5)?
 						AtomValue(CompoundArgN(bpp,5)):"0");
+					if(defined_em_charge())
+						{
+						Term ch=GetAtomProperty(bp,A_EM_CHARGE);
+						fprintf(f,"\tCharge -> ");
+						if(ch==0)
+							fprintf(f,"0\n");
+						else if(CompoundArg2(ch)==NewInteger(1))
+							fprintf(f,"%d\n",IntegerValue(CompoundArg1(ch)));
+						else
+							fprintf(f,"%d/%d\n",IntegerValue(CompoundArg1(ch)),
+											IntegerValue(CompoundArg2(ch)));
+						}
 				fprintf(f,"\tPropagatorLabel -> \"%s\",\n",AtomValue(tnm));
 				fprintf(f,"\tPropagatorType -> ScalarDash,\n");
 				fprintf(f,"\tPropagatorArrow -> %s }",
@@ -361,7 +469,12 @@ void FA_write_lagr(List l, FILE *f)
 		alg2_red_cos(a2);
 		alg2_red_orth(a2);
 		
-
+/*		{
+			List ml=ConsumeCompoundArg(a2,5);
+			ml=SortedList(ml,mlsort);
+			SetCompoundArg(a2,5,ml);
+		}
+*/
 		alg2_red_sico(a2);
 		alg2_red_comsico(a2);
 
@@ -1123,7 +1236,8 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
 			sno+=fprintf(of,"SUNF[c%d, c%d, c%d, c%d] ",il1+1,il2+1,il3+1,il4+1);
-			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
+			if(sno>60 && ListTail(l) && (ListTail(l)!=l2 || ListTail(l2))) 
+				{fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
 			ChangeList(l2,0);
 			continue;
@@ -1181,7 +1295,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
 			sno+=fprintf(of,"SUNDF[c%d, c%d, c%d, c%d] ",il1+1,il2+1,il3+1,il4+1);
-			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
+			if(sno>60 && ListTail(l)&& (ListTail(l)!=l2 || ListTail(l2))) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
 			ChangeList(l2,0);
 			continue;
@@ -1201,7 +1315,7 @@ static void wrt_expr(FILE *of, Term num, List sym, List ten)
 			if(i==4){WriteVertex(cv);WriteTerm(ListFirst(l2));
 			puts(": color structure error(2)");il4=IntegerValue(in4);}
 			sno+=fprintf(of,"SUND[c%d, c%d, c%d, c%d] ",il1+1,il2+1,il3+1,il4+1);
-			if(sno>60 && ListTail(l)) {fprintf(of,"*\n\t\t");sno=15;}
+			if(sno>60 && ListTail(l)&& (ListTail(l)!=l2 || ListTail(l2))) {fprintf(of,"*\n\t\t");sno=15;}
 			l2=ListTail(ListTail(CompoundArg2(ListFirst(l2))));
 			ChangeList(l2,0);
 			continue;

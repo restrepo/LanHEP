@@ -24,13 +24,13 @@ union fpoint
 		Float f;
 		} p;
 	};
-	
 
-	
-static union fpoint *f_next_free=NULL;	
+
+
+static union fpoint *f_next_free=NULL;
 static union fpoint *fbuffers[256];
 static int f_blocks=0, f_dtf=0, f_ftd=0;
-	
+
 Float NewFloat(double d)
 	{
 	union fpoint *p;
@@ -58,7 +58,7 @@ Float NewFloat(double d)
 	f_dtf++;
 	return f;
 	}
-	
+
 double FloatValue(Float f)
 	{
 	union fpoint *p;
@@ -71,7 +71,7 @@ double FloatValue(Float f)
 	}
 
 
-union COMPOpoint *COMPO_next_free=NULL;	
+union COMPOpoint *COMPO_next_free=NULL;
 union COMPOpoint *COMPO_buffers[4096];
 int COMPO_blocks=0, COMPO_tall=0, COMPO_tfree=0;
 int LABEL_count = 0;
@@ -110,24 +110,24 @@ __inline long IntegerValue(Integer i)
 
 __inline Functor NewFunctor(Atom name, int arity)
 	{
-	if(arity<1 || arity >29)
+	if(arity<1 || arity >100)
 		{  puts("Internal error (arity out of range)."); exit(0); }
 	/*newfu[arity]++;*/
 	return (name&0xffffff) + (arity+1)*0x1000000;
 	}
 
-/*	
+/*
 __inline Atom 	FunctorName(Functor f)
 	{
 	return (f & 0xffffff) + 0x1000000;
 	}
-	
+
 __inline int 	FunctorArity(Functor f)
 	{
 	return (f/0x1000000)-1;
 	}
 */
-			
+
 __inline void COMPO_free(Compound c)
 	{
 	union COMPOpoint *p;
@@ -143,8 +143,8 @@ __inline void COMPO_free(Compound c)
 	COMPO_tfree++;
 	return;
 	}
-	
-	
+
+
 __inline union COMPOpoint *COMPO_alloc(Compound *cco)
 	{
 	union COMPOpoint *p;
@@ -179,7 +179,7 @@ __inline Compound  NewCompound(Functor fu)
 	union COMPOpoint *p;
 	Compound c;
 	int arity;
-	
+
 	arity=FunctorArity(fu);
 	p=COMPO_alloc(&c);
 	p->data.a[0]=fu;
@@ -201,9 +201,9 @@ __inline Compound  NewCompound(Functor fu)
 	return c;
 	}
 
-	
-	
-/*	
+
+
+/*
 __inline Functor CompoundFunctor(Compound c)
 	{
 	union COMPOpoint *p;
@@ -215,7 +215,7 @@ __inline Functor CompoundFunctor(Compound c)
 	return p->data.a[0];
 	}
 */
-			
+
 __inline void SetCompoundName(Compound c, Atom name)
 	{
 	union COMPOpoint *p;
@@ -280,7 +280,7 @@ __inline Term ConsumeCompoundArg(Compound c, int arg)
 	ret=p->data.a[arg];
 	p->data.a[arg]=0;
 	return ret;
-	}	
+	}
 
 
 __inline void SetCompoundArg(Compound c, int arg, Term t)
@@ -297,7 +297,7 @@ __inline void SetCompoundArg(Compound c, int arg, Term t)
 	/*if(p->data.a[arg]!=0) FreeAtomic(p->data.a[arg]);*/
 	p->data.a[arg]=t;
 	}
-	
+
 
 __inline Compound MakeCompound(Atom name, int arity)
 	{
@@ -395,19 +395,20 @@ __inline int   LabelValue(Atomic l)
 
 void FreeCompound(Compound c)
 	{
-	union COMPOpoint *p,*p1;
+	union COMPOpoint *p,*ps,*p1;
 	int bno,bpos,arity;
 	Compound c1;
 	bno=c&0xfff0000;
 	bno/=0x10000;
 	bpos=c&0xffff;
 	p=COMPO_buffers[bno]+bpos;
+	ps=p;
 	arity=FunctorArity(p->data.a[0]);
 	do
 		{
 		p1=p->data.next_p;
 		c1=p->data.next_a;
-		FreeAtomic(p->data.a[0]);
+		if(p!=ps) FreeAtomic(p->data.a[0]);
 		FreeAtomic(p->data.a[1]);
 		FreeAtomic(p->data.a[2]);
 		COMPO_free(c);
@@ -415,8 +416,8 @@ void FreeCompound(Compound c)
 		c=c1;
 		}   while(p!=NULL && c!=0);
 	}
-		
-	
+
+
 
 void FreeAtomic(Atomic a)
 	{
@@ -448,7 +449,7 @@ void FreeAtomic(Atomic a)
 		FreeList(a);
 		return;
 		}
-		
+
 	}
 
 Term CopyTerm(Term t)
@@ -496,7 +497,7 @@ Term CopyTerm(Term t)
      return 0;
      }
 
-	
+
 char AtomicType(Atomic a)
 	{
 	long type;
@@ -519,8 +520,8 @@ char AtomicType(Atomic a)
 		return 'e';
 	return '?';
 	}
-	
-		
+
+
 void AtomStatistics(void)
 	{
 	/*int i;*/
@@ -545,7 +546,7 @@ long TermMemory(void)
 	{
 	return (long)COMPO_blocks*sizeof(union COMPOpoint)*64;
 	}
-	
+
 int EqualTerms(Term t1, Term t2)
 	{
 	if(t1==t2)
@@ -555,7 +556,7 @@ int EqualTerms(Term t1, Term t2)
 		{
 		int i,a;
 		a=CompoundArity(t1);
-		for(i=1;i<=a;i++)	
+		for(i=1;i<=a;i++)
 			if(!EqualTerms(CompoundArgN(t1,i),CompoundArgN(t2,i)))
 				return 0;
 		return 1;
@@ -576,5 +577,5 @@ int EqualTerms(Term t1, Term t2)
 		}
 	return 0;
 	}
-			
-			
+
+

@@ -12,7 +12,7 @@ typedef double (*extfunc)(double,...);
 int P_D_WIDTH=85;
 int longest_pdline=0;
 Atom llparam=0;
-		
+
 static List params=0, cparams=0, rparams=0;
 static Term rm_zero(Term);
 static int legal_expr(Term t);
@@ -36,7 +36,7 @@ List all_rparam_list(void)
 	{
 	return rparams;
 	}
-	
+
 static double cu_rt(double r, double i)
 {
 	double mod, ph;
@@ -53,7 +53,7 @@ static void proc_param(Term t)
 	{
 	Atom name, value, comment, aname=0;
 	List li;
-	
+
 	if(is_compound(t) && CompoundName(t)==OPR_COMMA)
 		{
 		Term a,b;
@@ -64,7 +64,7 @@ static void proc_param(Term t)
 		proc_param(b);
 		return;
 		}
-		
+
 	if(is_atom(t) || (is_compound(t) && CompoundName(t)==OPR_DIV) )
 		{ name=t; value=0; comment=0; }
 	else 
@@ -83,7 +83,7 @@ static void proc_param(Term t)
 		else
 			{ value=t; comment=0; }
 		}
-		
+
 	if(is_compound(name) && CompoundName(name)==OPR_DIV)
 		{
 /*		if(!FAOutput)
@@ -97,7 +97,7 @@ static void proc_param(Term t)
 		FreeAtomic(name);
 		name=t;
 		}
-	
+
 	if(!is_atom(name))
 		{
 		ErrorInfo(101);
@@ -121,7 +121,7 @@ static void proc_param(Term t)
 		FreeAtomic(comment);
 		return;
 		}
-		
+
 	if(comment!=0 && !is_atom(comment))
 		{
 		ErrorInfo(102);
@@ -134,17 +134,17 @@ static void proc_param(Term t)
 		FreeAtomic(comment);
 		return;
 		}
-	
+
 	if(!doing_abbr)
-	{	
+	{
 		value=ProcessAlias(value);
 		/*WriteTerm(value);printf(" -> ");*/
 		value=rm_zero(value);
 		/*WriteTerm(value);puts("");*/
 	}
-	
+
 	chk_cmplx=0;
-	
+
 	if(/*doing_abbr==0 &&*/ value !=0 && !legal_expr(value))
 		{
 		ErrorInfo(103);
@@ -157,23 +157,23 @@ static void proc_param(Term t)
 		FreeAtomic(comment);
 		return;
 		}
-		
+
 	if(chk_cmplx && aname==0)
 		{
 		char cbuf[80];
-/*		if(!FAOutput)
+		if(!FAOutput && !CalcOutput)
 			{
 			ErrorInfo(0);
 			printf("complex parameter is not allowed.\n");
 			}
-*/
+
 		sprintf(cbuf,"%scc",AtomValue(name));
 		aname=NewAtom(cbuf,0);
 		}
-	
+
 	if(AtomValue(name)[0]=='%' && value==0)
 		value=A_I;
-		
+
 	if(!doing_abbr)
 	{
 	li=params;
@@ -189,7 +189,7 @@ static void proc_param(Term t)
 				SetCompoundArg(t1,1,value);
 			if(comment!=0)
 				SetCompoundArg(t1,2,comment);
-			
+
 			if(strcmp(AtomValue(name),"Maux"))
 				{
 				WarningInfo(104);
@@ -203,7 +203,7 @@ static void proc_param(Term t)
 		li=ListTail(li);
 		}
 	}
-	
+
 /*	fu=NewFunctor(name,3);*/
 	t=MakeCompound3(name,value,comment,0);
 /*	SetCompoundArg(t,1,value);
@@ -215,10 +215,10 @@ static void proc_param(Term t)
 	 	rparams=AppendLast(rparams,name);
 	ReportRedefined(name,"parameter");
 	SetAtomProperty(name,PROP_TYPE,OPR_PARAMETER);
-	
+
 	if(opTriHeu && !doing_abbr)
 		tri_reg_prm(name,value);
-	
+
 	if(aname)
 	{
 	ReportRedefined(aname,"parameter");
@@ -227,7 +227,7 @@ static void proc_param(Term t)
 	SetAtomProperty(aname,A_ANTI,name);
 	SetAtomProperty(aname,A_HERMC,name);
 	}
-	
+
 /*	if(IsTermInput())
 		{
 		printf("Parameter \'%s\' ",AtomValue(name));
@@ -244,7 +244,7 @@ static List params_tail=0, rparams_tail=0, cparams_tail=0;
 void proc_abbr_param(Term name, Term value)
 	{
 	Atom comment=0, aname=0;
-	Term t;			
+	Term t;
 	if(params_tail==0)
 		params_tail=params;
 	while(ListTail(params_tail)) params_tail=ListTail(params_tail);
@@ -256,7 +256,7 @@ void proc_abbr_param(Term name, Term value)
 	if(cparams_tail==0)
 		cparams_tail=cparams;
 	while(cparams_tail && ListTail(cparams_tail)) cparams_tail=ListTail(cparams_tail);
-	
+
 	chk_cmplx=0;
 	legal_expr(value);
 	if(chk_cmplx)
@@ -269,7 +269,7 @@ void proc_abbr_param(Term name, Term value)
 		SetAtomProperty(name,A_ANTI,aname);
 		SetAtomProperty(aname,A_ANTI,name);
 		SetAtomProperty(aname,A_HERMC,name);
-		if(cparams==0)	
+		if(cparams==0)
 			cparams=AppendLast(cparams,name);
 		else
 			AppendLast(cparams_tail,name);
@@ -279,7 +279,7 @@ void proc_abbr_param(Term name, Term value)
 	t=MakeCompound3(name,value,comment,0);
 	AppendLast(params_tail,t);
 	SetAtomProperty(name,PROP_TYPE,OPR_PARAMETER);
-	
+
 	}
 
 Term ProcessParameter(Term t, Term ind)
@@ -391,14 +391,14 @@ static int legal_expr(Term t)
 			{
 			Integer efa=GetAtomProperty(CompoundName(t),A_EXT_FUNC);
 			arity=FunctorArity(fu);
-			
+
 			if(efa && IntegerValue(efa)!=0  && IntegerValue(efa)!=arity)
 				{
 				printf("Wrong arguments number in function %s(...).\n",
 					AtomValue(CompoundName(t)));
 				return 0;
 				}
-			
+
 			for(i=1;i<=arity;i++)
 				{
 				Term ca=CompoundArgN(t,i);
@@ -452,8 +452,8 @@ static void texWriteParams(int fno, char *name)
 		perror("");
 		return;
 		}
-	
-	fprintf(f1,"\\begin{tabular}{|l|l|l|} \\hline\n");	
+
+	fprintf(f1,"\\begin{tabular}{|l|l|l|} \\hline\n");
 	fprintf(f1,"Parameter & Value & Comment \\\\ \\hline\n");
 	li=params;
 	while(!is_empty_list(li))
@@ -577,7 +577,7 @@ void FADeclRealParam(FILE *f)
 	li2=cls_real_matr();
 	if(li2==0)
 		return;
-	
+
 	fprintf(f,"Scan[ (RealQ[#] = True)&,\n  { "); 
 	for(li=li2,i=1;li;li=ListTail(li),i++)
 	{
@@ -620,7 +620,7 @@ Atom toccf(Atom a)
 	if((aa=GetAtomProperty(a,A_HERMC)))
 		return MakeCompound1(fa_ccf,aa);
 	return a;
-}	
+}
 
 void ccf_term(Term t)
 {
@@ -655,33 +655,38 @@ void ccf_term(Term t)
 }
 
 extern int UFOutput;
+extern List UFOparah,UFOcouph;
+extern char *eff_infile;
 
 void UFWriteParameters(void)
 {
 	char cbuf[128];
 	time_t tm;
-	List li;
+	List li,lj;
 	FILE *f;
-	
+
 	NoQuotes=1;
-			
+
 	if(OutputDirectory!=NULL)
 		sprintf(cbuf,"%s/parameters.py",OutputDirectory);
 	else
 		sprintf(cbuf,"parameters.py");
 	f=fopen(cbuf,"w");
-	
-	
+
 	fprintf(f,"%%     LanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
+	fprintf(f,"%%     from the file '%s'\n",eff_infile);
+
 	if(ModelName)
 		fprintf(f,"%%     Model named '%s'\n",ModelName);
 	fprintf(f,"\n");
 
-	fprintf(f,"from object_library import all_parameters, Parameter\n");
-	fprintf(f,"from function_library import complexconjugate, re, im, csc, sec, acsc, asec\n");
 	
+	for(li=UFOparah;li;li=ListTail(li))
+		fprintf(f,"%s\n",AtomValue(ListFirst(li)));
+	fprintf(f,"\n");
+
 	for(li=params;li;li=ListTail(li))
 	{
 		Term t, val, tm;
@@ -692,7 +697,7 @@ void UFWriteParameters(void)
 		if(strcmp(AtomValue(t),"A00001")==0)
 		  break;
 		val=CompoundArg1(ListFirst(li));
-		
+
 		if(val==0) val=NewInteger(0);
 		fprintf(f,"%s = Parameter(name = '%s',\n",AtomValue(t),AtomValue(t));
 		fprintf(f,"               nature = '%s',\n",
@@ -724,30 +729,35 @@ void UFWriteParameters(void)
 		fprintf(f,"               lhacode = ");
 		fWriteTerm(f,CompoundArg1(tm));
 		}
-		fprintf(f," )\n\n");	
-		
+		fprintf(f," )\n\n");
+
 	}
-	
+
 	fclose(f);
-	
-	
+
+
 	if(OutputDirectory!=NULL)
 		sprintf(cbuf,"%s/couplings.py",OutputDirectory);
 	else
 		sprintf(cbuf,"couplings.py");
 	f=fopen(cbuf,"w");
-	
-	
+
+
 	fprintf(f,"%%     LanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
+	fprintf(f,"%%     from the file '%s'\n",eff_infile);
+
 	if(ModelName)
 		fprintf(f,"%%     Model named '%s'\n",ModelName);
 	fprintf(f,"\n");
 
-	fprintf(f,"from object_library import all_couplings, Coupling\n");
-	fprintf(f,"from function_library import complexconjugate, re, im, csc, sec, acsc, asec\n");
 	
+	for(lj=UFOcouph;lj;lj=ListTail(lj))
+		fprintf(f,"%s\n",AtomValue(ListFirst(lj)));
+	fprintf(f,"\n");
+
+
 	for(;li;li=ListTail(li))
 	{
 		Term t, val, tm, tm2;
@@ -756,11 +766,11 @@ void UFWriteParameters(void)
 		t=CompoundName(ListFirst(li));
 /*		if(strcmp(AtomValue(t),"pi")==0)
 		  continue;*/
-		
+
 		sscanf(AtomValue(t)+1,"%d",&no);
-		
+
 		val=CompoundArg1(ListFirst(li));
-		
+
 		if(val==0) val=NewInteger(0);
 		fprintf(f,"GC_%d = Coupling(name = 'GC_%d',\n",no,no);
 		fprintf(f,"               value = ");
@@ -774,7 +784,7 @@ void UFWriteParameters(void)
 		fprintf(f,",\n");
 		tm=GetAtomProperty(t,A_EE);
 		tm2=GetAtomProperty(t,A_GG);
-		
+
 		fprintf(f,"               order = {");
 		if(tm)
 			fprintf(f,"'QED':%d",IntegerValue(tm));
@@ -782,11 +792,11 @@ void UFWriteParameters(void)
 			fprintf(f,",");
 		if(tm2)
 			fprintf(f,"'QCD':%d",IntegerValue(tm2));
-		
-		fprintf(f," })\n\n");	
-		
+
+		fprintf(f," })\n\n");
+
 	}
-	
+
 	fclose(f);
 	NoQuotes=0;
 
@@ -801,7 +811,7 @@ Term ProcLHA(Term t, Term ind)
 		puts("lha: wrong syntax.");
 		return 0;
 	}
-	
+
 	l=CommaToList(CompoundArg1(t));
 	for(l1=l;l1;l1=ListTail(l1))
 	{
@@ -857,13 +867,13 @@ void FAWriteParameters(int fno)
 	int mtrini=0;
 	int first=1;
 	int aano=-1, abno=0;
-	
+
 	if(UFOutput)
 	{
 		UFWriteParameters();
 		return;
 	}
-	
+
 	if(fa_i==0)
 		fa_i=NewAtom("cI",0);
 	if(fa_ccf==0)
@@ -874,21 +884,21 @@ void FAWriteParameters(int fno)
 		SetAtomProperty(fa_rabb,A_CHNAME,A_I);
 		SetAtomProperty(fa_cabb,A_CHNAME,A_I);
 	}
-	
+
 	if(OutputDirectory!=NULL)
 		sprintf(cbuf,"%s/model%d.h",OutputDirectory,fno);
 	else
 		sprintf(cbuf,"model%d.h",fno);
 	f=fopen(cbuf,"w");
-	
-	
+
+
 	fprintf(f,"*     LanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
 	if(ModelName)
 		fprintf(f,"*     Model named '%s'\n",ModelName);
 	fprintf(f,"\n");
-	
+
 	fprintf(f,"      double precision Sqrt2, pi, degree, hbar_c2,bogus\n");
 	fprintf(f,"      parameter (Sqrt2=1.41421356237309504880168872421D0)\n");
 	fprintf(f,"      parameter (pi = 3.1415926535897932384626433832795029D0)\n");
@@ -896,12 +906,12 @@ void FAWriteParameters(int fno)
 	fprintf(f,"      parameter (hbar_c2 = 3.8937966D8)\n");
 	fprintf(f,"      parameter (bogus = -1D123)\n");
 	fprintf(f,"      double complex cI\n      parameter (cI = (0D0, 1D0))\n\n");
-	
+
 	fprintf(f,"      double precision Divergence\n      common /renorm/ Divergence\n\n");
 
-			
+
 	p=fprintf(f,"      double precision ");
-	
+
 	for(li=rparams;li;li=ListTail(li))
 	{
 		Term ttt=ListFirst(li);
@@ -932,7 +942,7 @@ void FAWriteParameters(int fno)
 		p=fprintf(f,"\n\n      double complex ")-2;
 		first=1;
 	}
-	
+
 	for(li=cparams;li;li=ListTail(li))
 	{
 		Term ttt=ListFirst(li);
@@ -960,9 +970,9 @@ void FAWriteParameters(int fno)
 			fprintf(f,"      double complex AAABC(%d)\n",c_abbr_no);
 	}
 	fprintf(f,"\n");
-	
+
 	cls_write_decl(f);
-	
+
 	first=1;
 	fprintf(f,"      common /mdl_para/\n     &    ");
 	p=10;
@@ -995,16 +1005,16 @@ void FAWriteParameters(int fno)
 
 	fprintf(f,"\n\n");
 	fclose(f);
-	
+
 	NoQuotes=1;
-	
+
 	if(OutputDirectory!=NULL)
 		sprintf(cbuf,"%s/mdl_ini%d.F",OutputDirectory,fno);
 	else
 		sprintf(cbuf,"mdl_ini%d.F",fno);
 	f=fopen(cbuf,"w");
-	
-	
+
+
 	if(EvalPrm)
 	{
 		for(li=params;li;li=ListTail(li))
@@ -1014,7 +1024,7 @@ void FAWriteParameters(int fno)
 				SetCompoundArg(ListFirst(li),1,NewFloat(EvalParameter(t)));
 		}
 	}
-	
+
 	fprintf(f,"*     LanHEP output produced at ");
 	time(&tm);
 	fprintf(f,ctime(&tm));
@@ -1043,7 +1053,7 @@ void FAWriteParameters(int fno)
 	}
 
     fprintf(f,"\n      end\n\n");
-	
+
 	if(FAver==4)
 	fprintf(f,"\n      subroutine ModelConstIni(*)\n      implicit none\n\n");
 	else
@@ -1063,10 +1073,10 @@ void FAWriteParameters(int fno)
 
 	if(FAver==6)
 		fprintf(f,"      fail=0\n");
-	
+
 	if(FAver==4)
 		fprintf(f,"      call ModelDefaults\n");
-	
+
 	for(li=params;li;li=ListTail(li))
 	{
 		Term t, val;
@@ -1077,7 +1087,7 @@ void FAWriteParameters(int fno)
 		val=CompoundArg1(ListFirst(li));
 		if(val==0) val=NewInteger(0);
 		if(is_float(val) || is_integer(val)) continue;
-		
+
 		if(strcmp(AtomValue(t),"A00001")==0)
 		{
 			int bno=ListLength(li)-1, j;
@@ -1092,7 +1102,7 @@ void FAWriteParameters(int fno)
 			aano=0;
 			mtrini=1;
 		}
-		
+
 		if(aano==1000)
 		{
 			fprintf(f,"      end\n\n");
@@ -1100,10 +1110,10 @@ void FAWriteParameters(int fno)
 			fprintf(f,"#include \"model.h\"\n\n");
 			aano=0;
 		}
-		
+
 		if(aano!=-1)
 			aano++;
-		
+
 		if(opAbbArr && GetAtomProperty(t,A_CHNAME))
 		{
 			int no=IntegerValue(GetAtomProperty(t,A_CHNAME));
@@ -1112,7 +1122,7 @@ void FAWriteParameters(int fno)
 		}
 		else
 		p=fprintf(f,"      %s = ",AtomValue(t));
-		
+
 		if(is_atom(val))
 			val=toccf(val);
 		else
@@ -1140,16 +1150,16 @@ void FAWriteParameters(int fno)
 		}
 		fprintf(f,"%s\n",mtp);
 	}
-	
+
 	if(mtrini==0)
 		fprintf(f,"      call mtrini\n");
 	fprintf(f,"      end\n\n");
 	fprintf(f,"      subroutine mtrini\n      implicit none\n");
 	fprintf(f,"#include \"model.h\"\n\n");
-	fprintf(f,"      integer m1,m2,m3,m4\n\n");				
-	
+	fprintf(f,"      integer m1,m2,m3,m4\n\n");
+
 	cls_write_matr(f);
-	
+
 	fprintf(f,"\n      end\n\n*************************************");
 	if(FAver==4)
 	fprintf(f,"**********\n\n      subroutine ModelVarIni(sqrtS, *)\n\
@@ -1182,7 +1192,7 @@ c      GG = sqrt(4*pi*Alfas)\n\
       fail=0\n\
       end\n\n");
 	 
-	
+
 	fprintf(f,"************************************************\n\n");
 	fprintf(f,"\
       subroutine ModelDigest\n\
@@ -1190,7 +1200,7 @@ c      GG = sqrt(4*pi*Alfas)\n\
 \n\
 #include \"model.h\"\n\
 \n");
-/*	
+/*
 	for(li=params;li;li=ListTail(li))
 	  {
 	    Term t=CompoundName(ListFirst(li));
@@ -1198,11 +1208,11 @@ c      GG = sqrt(4*pi*Alfas)\n\
 	  } 
 */
       fprintf(f,"\n      end\n\n");
-	
-	
+
+
 	for(li=fainclude;li;li=ListTail(li))
 		fprintf(f,"#include \"%s\"\n\n",AtomValue(ListFirst(li)));
-		
+
 /*	fprintf(f,"#include \"alphas2.h\"\n\n");*/
 
 	fclose(f);
@@ -1249,7 +1259,7 @@ void FAsqparam(FILE *f)
 {
 	List l;
 	int z=0;
-	
+
 	for(l=params;l;l=ListTail(l))
 	{
 		Term t=ListFirst(l);
@@ -1263,7 +1273,7 @@ void FAsqparam(FILE *f)
 			z++;
 		}
 	}
-	fprintf(f,"\n");	
+	fprintf(f,"\n");
 /*	if(z)
 	{
 		fprintf(f,"FormSubst = \"\\\n");
@@ -1288,7 +1298,7 @@ void FAsqparam(FILE *f)
 
 int SecondVaFu=0;
 extern int opAutoWidths, pformat_def(void);
-	
+
 void WriteParameters(int fno, char *name)
 	{
 	FILE *f1, *f2;
@@ -1334,11 +1344,14 @@ void WriteParameters(int fno, char *name)
 		fprintf(f1," "),fprintf(f2," ");
 	for(li=params;li;li=ListTail(li))
 	{
-		Term ttt, val;
+		Term ttt, val, attt;
 		int tttl;
 		ttt=ListFirst(li);
 		val=CompoundArg1(ttt);
 		tttl=strlen(AtomValue(CompoundName(ttt)));
+		attt=GetAtomProperty(CompoundName(ttt),A_ANTI);
+		if(attt)
+			tttl+=strlen(AtomValue(attt))+1;
 		if(val==0 || is_integer(val) || is_float(val))
 		{
 			if(tttl>pnamel) pnamel=tttl;
@@ -1348,7 +1361,7 @@ void WriteParameters(int fno, char *name)
 			if(tttl>fnamel) fnamel=tttl;
 		}
 	}
-		
+
 	fprintf(f1," Name");
 	WriteBlank(f1,pnamel-5);
 	fprintf(f1,"| Value       |>  Comment                                   <|\n");
@@ -1363,10 +1376,11 @@ void WriteParameters(int fno, char *name)
 	li=params;
 	while(!is_empty_list(li))
 		{
-		Term ttt, val, comm;
+		Term ttt, val, comm, attt;
 		ttt=ListFirst(li);
 		val=CompoundArg1(ttt);
 		comm=CompoundArg2(ttt);
+		attt=GetAtomProperty(CompoundName(ttt),A_ANTI);
 		if(val==0) val=NewInteger(0);
 		if(SecondVaFu && !(is_integer(val)||is_float(val))
 				&& micro_allpr(CompoundName(ttt),val))
@@ -1381,6 +1395,8 @@ void WriteParameters(int fno, char *name)
 				&& val==NewInteger(0))
 				{li=ListTail(li); continue;}
 			sp=fprintf(f1,"%s",AtomValue(FunctorName(CompoundFunctor(ttt))));
+			if(attt)
+				sp+=fprintf(f1,"/%s",AtomValue(attt));
 			WriteBlank(f1,pnamel-sp);
 			fprintf(f1,"|");
 			if(is_integer(val) || is_float(val))
@@ -1403,6 +1419,8 @@ void WriteParameters(int fno, char *name)
 			{
 			int sp;
 			sp=fprintf(f2,"%s",AtomValue(FunctorName(CompoundFunctor(ttt))));
+			if(attt)
+				sp+=fprintf(f2,"/%s",AtomValue(attt));
 			WriteBlank(f2,fnamel-sp);
 			fprintf(f2,"|");
 			NoQuotes=1;
@@ -1446,7 +1464,7 @@ void WriteParameters(int fno, char *name)
 	fclose(f1);
 	fclose(f2);
 	}
-	
+
 void ClearParameter(Atom p)
 	{
 	List l;
@@ -1484,7 +1502,7 @@ void ClearParameter(Atom p)
 	}
 
 
-	
+
 void ChangeParameterValue(Atom t, double val)
 	{
 	List l;
@@ -1497,9 +1515,9 @@ void ChangeParameterValue(Atom t, double val)
 			}
 		}
 	puts("Internal error (prms01)");
-	}	
+	}
 
-	
+
 double sort4(double m1, double m2, double m3, double m4, double dn)
 {
 	int n;
@@ -1510,7 +1528,7 @@ double sort4(double m1, double m2, double m3, double m4, double dn)
 	m[1]=m2;
 	m[2]=m3;
 	m[3]=m4;
-	
+
 	do
 	{
 		f=0;
@@ -1523,12 +1541,12 @@ double sort4(double m1, double m2, double m3, double m4, double dn)
 				m[i+1]=tmp;
 				f=1;
 			}
-			
+
 	} while(f);
-	
+
 	return m[n];
 }
-	
+
 /*
 extern int    slhaRead(char *fname,int mode);
 extern double slhaVal(char * Block, double Q, int nKey, ...);
@@ -1538,23 +1556,23 @@ extern double  MassArray(int id,  int i);
 extern double  MixMatrix(int id,  int i, int j);
 extern double  MixMatrixU(int id,  int i, int j);
 */
-		
+
 #include "SLHAplus/SLHAplus.h"
-		
+
 static double eval_ef(Atom, int, double *);
 
 
 double EvalParameter(Term t)
 	{
-	
+
 	if(t==0)
 		return 1.0;
-		
+
 	if(t==A_SQRT2)
 		return sqrt((double)2.0);
 	if(t==A_I)
 		return 1.0;
-	
+
 	if(is_integer(t))
 		return (double)IntegerValue(t);
 	if(is_float(t))
@@ -1562,8 +1580,8 @@ double EvalParameter(Term t)
 	if(is_atom(t) && is_parameter(t))
 		{
 		List l;
-		
-		
+
+
 		l=GetAtomProperty(t,A_DUMMY_PRM);
 		if(l)
 		{
@@ -1574,7 +1592,7 @@ double EvalParameter(Term t)
 						EvalParameter(CompoundArg2(ListFirst(l1)));
 			return ret;
 		}
-		
+
 		for(l=params;l;l=ListTail(l))
 			{
 			if(CompoundName(ListFirst(l))==t)
@@ -1597,20 +1615,31 @@ double EvalParameter(Term t)
 			}
 		if(GetAtomProperty(t,A_EXT_FUNC))
 		{
-			if(strcmp(AtomValue(t),"initDiagonal")==0)
+			if(strncmp(AtomValue(t),"initDiagonal",12)==0)
 				return initDiagonal();
 			else
 				return 0.0;
 		}
-					
+
+		if(GetAtomProperty(t,A_ANTI))
+		{
+			static int prm01w=0;
+			if(prm01w==0)
+			{
+				prm01w=1;
+				WarningInfo(0);
+				puts("Numeric evaluation of complex mumbers is not implemented.");
+			}
+			return 0.0;
+		}
 		printf("Internal error (prm01'%s')\n",AtomValue(t));
 		return 0.0;
-		}	
-		
+		}
+
 	if(is_compound(t) && GetAtomProperty(CompoundName(t),A_EXT_FUNC) &&
 		GetAtomProperty(CompoundName(t),CompoundName(t)))
 	{
-		double arr[30];
+		double arr[101];
 		int i;
 		for(i=1;i<=CompoundArity(t);i++)
 			arr[i-1]=EvalParameter(CompoundArgN(t,i));
@@ -1625,12 +1654,12 @@ double EvalParameter(Term t)
 		t2=EvalParameter(CompoundArgN(t,2));
 		t3=EvalParameter(CompoundArgN(t,3));
 		t4=EvalParameter(CompoundArgN(t,4));
-		t5=EvalParameter(CompoundArgN(t,5));		
+		t5=EvalParameter(CompoundArgN(t,5));
 		t1=sort4(t1,t2,t3,t4,t5);
 		return t1;
-		
+
 	}
-	
+
 	if(is_compound(t) && strcmp(AtomValue(CompoundName(t)),"MassArray")==0
 			&& CompoundArity(t)==2)
 	{
@@ -1649,7 +1678,7 @@ double EvalParameter(Term t)
 		t3=EvalParameter(CompoundArgN(t,3));
 		t2=MixMatrix((int)t1,(int)t2,(int)t3);
 		return t2;
-		
+
 	}
 	if(is_compound(t) && strcmp(AtomValue(CompoundName(t)),"MixMatrixU")==0
 			&& CompoundArity(t)==3)
@@ -1660,7 +1689,7 @@ double EvalParameter(Term t)
 		t3=EvalParameter(CompoundArgN(t,3));
 		t2=MixMatrixU((int)t1,(int)t2,(int)t3);
 		return t2;
-		
+
 	}
 
 	if(is_compound(t) && strcmp(AtomValue(CompoundName(t)),"slhaVal")==0
@@ -1676,12 +1705,12 @@ double EvalParameter(Term t)
 		t2=EvalParameter(CompoundArgN(t,2));
 		t3=EvalParameter(CompoundArgN(t,3));
 		t4=EvalParameter(CompoundArgN(t,4));
-			
+
 		t2=slhaVal(AtomValue(va),t2,(int)t3,(int)t4);
 		return t2;
-		
+
 	}
-	
+
 	if(is_compound(t) && strcmp(AtomValue(CompoundName(t)),"slhaVal")==0
 			&& CompoundArity(t)==5)
 	{
@@ -1695,17 +1724,17 @@ double EvalParameter(Term t)
 		t2=EvalParameter(CompoundArgN(t,2));
 		t3=EvalParameter(CompoundArgN(t,3));
 		t4=EvalParameter(CompoundArgN(t,4));
-		t5=EvalParameter(CompoundArgN(t,5));		
+		t5=EvalParameter(CompoundArgN(t,5));
 		t2=slhaVal(AtomValue(va),t2,(int)t3,(int)t4,(int)t5);
 		return t2;
-		
+
 	}
 
 	if(is_compound(t) && GetAtomProperty(CompoundName(t),A_EXT_FUNC))
 	{
 		return 0.0;
 	}
-	
+
 	if(is_compound(t) && CompoundArity(t)==2 && CompoundName(t)==OPR_PLUS)
 		return EvalParameter(CompoundArg1(t))+EvalParameter(CompoundArg2(t));
 	if(is_compound(t) && CompoundArity(t)==2 && CompoundName(t)==OPR_MINUS)
@@ -1751,8 +1780,8 @@ double EvalParameter(Term t)
 		else
 			t1=EvalParameter(CompoundArgN(t,3));
 		return t1;
-	}	
-	
+	}
+
 	if(is_list(t))
 		{
 		double ret=1.0;
@@ -1772,11 +1801,11 @@ double EvalParameter(Term t)
 			}
 		return ret;
 		}
-	
+
 	printf("Error: can not evaluate ");
 	WriteTerm(t);
 	puts("");
-	
+
 	return 0.0;
 	}
 
@@ -1806,20 +1835,20 @@ Term InterfEvalParam(Term t, Term ind)
 	printf("=%f\n",ret);
 	FreeAtomic(t);
 	return 0;
-	
+
 	}
-	
+
 Term ProcTailPrm(Term t, Term ind)
 {
 	List l1,l2;
-	
+
 	if(!is_compound(t) || CompoundArity(t)!=1 || !is_list(CompoundArg1(t)))
 	{
 		ErrorInfo(112);
 		puts("wrong syntax in 'tail_prm' call.");
 		return 0;
 	}
-	
+
 	l1=ConsumeCompoundArg(t,1);
 	FreeAtomic(t);
 	t=l1;
@@ -1843,7 +1872,7 @@ Term ProcTailPrm(Term t, Term ind)
 			continue;
 		}
 	}
-	
+
 	for(l1=params;l1;l1=ListTail(l1))
 	{
 		if(ListMember(t,CompoundName(ListFirst(l1))))
@@ -1854,7 +1883,7 @@ Term ProcTailPrm(Term t, Term ind)
 			ChangeList(l1,0);
 		}
 	}
-	
+
 rpt:
 	for(l1=params;l1;l1=ListTail(l1))
 	{
@@ -1864,9 +1893,9 @@ rpt:
 			goto rpt;
 		}
 	}
-	
+
 	params=ConcatList(params,l2);
-/*	
+/*
 	for(l1=params;l1;l1=ListTail(l1))
 	{
 		if(ListMember(t,CompoundName(ListFirst(l1))))
@@ -1881,7 +1910,7 @@ rpt:
 			}
 		}
 	}
-*/	
+*/
 	return 0;
 }
 
@@ -1891,38 +1920,38 @@ Term ProcCHEPPrm(Term t, Term ind)
 	char fnbuf[512];
 	int has_fn=0;
 	FILE *fin, *fout;
-	
+
 	if(!is_compound(t) || CompoundArity(t)<1)
 	{
 		ErrorInfo(113);
 		puts("wrong syntax in 'read_chep_prm' statement");
 		return 0;
 	}
-	
+
 	if(!is_integer(CompoundArg1(t)))
 	{
 		ErrorInfo(113);
 		puts("'read_chep_prm': the first argument should be integer.");
 		return 0;
 	}
-	
+
 	mono=IntegerValue(CompoundArg1(t));
 
 	if(CompoundArity(t)>1)
 		has_fn=1;
-	
+
 	if(has_fn && !is_atom(CompoundArg2(t)))
 	{
 		ErrorInfo(113);
 		puts("'read_chep_prm': the second argument (directory) should be string const");
 		return 0;
 	}
-	
+
 	if(has_fn)
 		sprintf(fnbuf,"%s/prm_from_chep.mdl",AtomValue(CompoundArg2(t)));
 	else
 		sprintf(fnbuf,"prm_from_chep.mdl");
-	
+
 	fout=fopen(fnbuf,"w");
 	if(fout==NULL)
 	{
@@ -1931,12 +1960,12 @@ Term ProcCHEPPrm(Term t, Term ind)
 		perror("'read_chep_prm':");
 		return 0;
 	}
-	
+
 	if(has_fn)
 		sprintf(fnbuf,"%s/vars%d.mdl",AtomValue(CompoundArg2(t)),mono);
 	else
 		sprintf(fnbuf,"vars%d.mdl",mono);
-	
+
 	fin=fopen(fnbuf,"r");
 	if(fin==NULL)
 	{
@@ -1945,61 +1974,61 @@ Term ProcCHEPPrm(Term t, Term ind)
 		perror("'read_chep_prm':");
 		return 0;
 	}
-	
+
 	fprintf(fout,"%%\n%% %s\n%%\n\n",fnbuf);
-	
+
 	fgets(fnbuf,510,fin);
 	fgets(fnbuf,510,fin);
 	fgets(fnbuf,510,fin);
-	
+
 	while(fgets(fnbuf,510,fin)!=NULL)
 	{
 		int i, pos1=0, pos2=0;
 		for(i=0;i<500;i++)
 			if(fnbuf[i]=='|')
 				break;
-		
+
 		if(i==500)
 		{
 			ErrorInfo(113);
 			puts("'read_chep_prm': corrupted 'vars' file.");
 			return 0;
 		}
-		
+
 		pos1=i;
-		
+
 		for(i=pos1+1;i<500;i++)
 			if(fnbuf[i]=='|')
 				break;
-		
+
 		if(i==500)
 		{
 			ErrorInfo(113);
 			puts("'read_chep_prm': corrupted 'vars' file.");
 			return 0;
 		}
-		
+
 		pos2=i;
-		
+
 		fnbuf[pos1]=0;
 		fnbuf[pos2]=0;
-		
+
 		while(fnbuf[pos2-1]==' ')
 		{
 			pos2--;
 			fnbuf[pos2]=0;
 		}
-				
+
 		fprintf(fout,"parameter %s = %s.\n",fnbuf,fnbuf+pos1+1);
 	}
-	
+
 	fclose(fin);
-	
+
 	if(has_fn)
 		sprintf(fnbuf,"%s/func%d.mdl",AtomValue(CompoundArg2(t)),mono);
 	else
 		sprintf(fnbuf,"func%d.mdl",mono);
-	
+
 	fin=fopen(fnbuf,"r");
 	if(fin==NULL)
 	{
@@ -2008,67 +2037,67 @@ Term ProcCHEPPrm(Term t, Term ind)
 		perror("'read_chep_prm':");
 		return 0;
 	}
-	
+
 	fprintf(fout,"\n%%\n%% %s\n%%\n\n",fnbuf);
-	
+
 	fgets(fnbuf,510,fin);
 	fgets(fnbuf,510,fin);
 	fgets(fnbuf,510,fin);
-	
+
 	while(fgets(fnbuf,510,fin)!=NULL)
 	{
 		int i, pos1=0, pos2=0;
 		for(i=0;i<500;i++)
 			if(fnbuf[i]=='|')
 				break;
-		
+
 		if(i==500)
 		{
 			ErrorInfo(113);
 			puts("'read_chep_prm': corrupted 'vars' file.");
 			return 0;
 		}
-		
+
 		pos1=i;
-		
+
 		for(i=pos1+1;i<500;i++)
 			if(fnbuf[i]=='|')
 				break;
-		
+
 		if(i==500)
 		{
 			ErrorInfo(113);
 			puts("'read_chep_prm': corrupted 'vars' file.");
 			return 0;
 		}
-		
+
 		pos2=i;
-		
+
 		fnbuf[pos1]=0;
 		fnbuf[pos2]=0;
-		
+
 		while(fnbuf[pos2-1]==' ')
 		{
 			pos2--;
 			fnbuf[pos2]=0;
 		}
-		
+
 		fprintf(fout,"parameter %s = %s.\n",fnbuf,fnbuf+pos1+1);
 	}
-	
+
 	fclose(fin);
 	fprintf(fout,"\n");
 	fclose(fout);
-	
+
 	if(has_fn)
 		sprintf(fnbuf,"%s/prm_from_chep.mdl",AtomValue(CompoundArg2(t)));
 	else
 		sprintf(fnbuf,"prm_from_chep.mdl");
-	
+
 	ReadFile(fnbuf);
-	
+
 	FreeAtomic(t);
-	
+
 	return 0;
 }
 
@@ -2087,8 +2116,8 @@ int extlib_problems=0;
 Term ProcExtFunc(Term t, Term ind)
 {
 	Atom fl=0;
-	
-		
+
+
 	if(!is_compound(t)|| CompoundArity(t)<2 || CompoundArity(t)>3 || 
 		!is_atom(CompoundArg1(t))|| 
 		(CompoundArity(t)==3 && !is_atom(CompoundArgN(t,3))))
@@ -2097,7 +2126,7 @@ Term ProcExtFunc(Term t, Term ind)
 		printf("Illegal syntax in external_func statement.\n");
 		return 0;
 	}
-	
+
 	if(is_integer(CompoundArg2(t))&&IntegerValue(CompoundArg2(t))==0)
 	{
 		char cbuf[128];
@@ -2107,6 +2136,7 @@ Term ProcExtFunc(Term t, Term ind)
 		name2=NewAtom(cbuf,0);
 		SetAtomProperty(name2,PROP_TYPE,OPR_PARAMETER);
 		t1=MakeCompound1(OPR_ALIAS,MakeCompound2(OPR_EQSIGN,name,name2));
+		printf("extfu0: %s %s\n",AtomValue(name),AtomValue(name2));
 		CallFunction(t1,0);
 		if(CompoundArity(t)==3)
 		{
@@ -2114,17 +2144,19 @@ Term ProcExtFunc(Term t, Term ind)
 			printf(
 			"external_func: evaluation of 0 arguments funcion is not supported\n");
 		}
+		SetAtomProperty(name2, A_EXT_FUNC, CompoundArg2(t));
+		ExtFuncList=AppendLast(ExtFuncList,name);
 		return 0;
 	}
-	
+
 	if(CompoundArg2(t)==OPR_MLT)
 		SetCompoundArg(t,2,NewInteger(0));
-	
+
 	if(!is_integer(CompoundArg2(t)) || IntegerValue(CompoundArg2(t))<0 || 
-			IntegerValue(CompoundArg2(t))>29)
+			IntegerValue(CompoundArg2(t))>100)
 	{
 		ErrorInfo(229);
-		puts("external_func: numer of arguments must be 0 to 29, or '*'.");
+		puts("external_func: numer of arguments must be 0 to 100, or '*'.");
 		return 0;
 	}
 
@@ -2136,7 +2168,7 @@ Term ProcExtFunc(Term t, Term ind)
 		void *ha;
 		extfunc hf;
 		hf=(extfunc)&initQCD;
-		fl=A_I;		
+		fl=A_I;
 		extfuncno++;
 		ep=(struct efel *)malloc(sizeof(struct efel));
 		ep->no=extfuncno;
@@ -2147,8 +2179,8 @@ Term ProcExtFunc(Term t, Term ind)
 		ep->next=flist;
 		flist=ep;
 	}
-	
-	
+
+
 	if(CompoundArity(t)==2 && CompoundArg2(t)==NewInteger(1) &&
 			(strcmp(AtomValue(CompoundArg1(t)),"McRun")==0 ||
 			strcmp(AtomValue(CompoundArg1(t)),"MbRun")==0 ||
@@ -2175,7 +2207,7 @@ Term ProcExtFunc(Term t, Term ind)
 			hf=(extfunc)&MbEff;
 		else
 			hf=(extfunc)&alphaQCD;
-		fl=A_I;		
+		fl=A_I;
 		extfuncno++;
 		ep=(struct efel *)malloc(sizeof(struct efel));
 		ep->no=extfuncno;
@@ -2186,7 +2218,7 @@ Term ProcExtFunc(Term t, Term ind)
 		ep->next=flist;
 		flist=ep;
 	}
-	
+
 	if(CompoundArity(t)==2 && 
 		(strcmp(AtomValue(CompoundArg1(t)),"rDiagonal")==0||
 		strcmp(AtomValue(CompoundArg1(t)),"rDiagonalA")==0))
@@ -2198,7 +2230,7 @@ Term ProcExtFunc(Term t, Term ind)
 			hf=&rDiagonal;
 		else
 			hf=&rDiagonalA;
-		fl=A_I;		
+		fl=A_I;
 		extfuncno++;
 		ep=(struct efel *)malloc(sizeof(struct efel));
 		ep->no=extfuncno;
@@ -2262,7 +2294,7 @@ Term ProcExtFunc(Term t, Term ind)
 		ep->next=flist;
 		flist=ep;
 	}
-	
+
 cnt:
 	SetAtomProperty(CompoundArg1(t), A_EXT_FUNC, CompoundArg2(t));
 	if(fl)
@@ -2297,7 +2329,7 @@ static double eval_ef(Atom fname, int ar, double *a)
 		case 8: return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]);
 		case 9: return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8]);
 		case 10:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9]);
-		
+
 		case 11:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
 				a[10]);
 		case 12:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
@@ -2315,7 +2347,7 @@ static double eval_ef(Atom fname, int ar, double *a)
 		case 18:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
 				a[10],a[11],a[12],a[13],a[14],a[15],a[16],a[17]);
 		case 19:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
-				a[10],a[11],a[12],a[13],a[14],a[15],a[16],a[17],a[18]);		
+				a[10],a[11],a[12],a[13],a[14],a[15],a[16],a[17],a[18]);
 		case 20:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
 				a[10],a[11],a[12],a[13],a[14],a[15],a[16],a[17],a[18],a[19]);
 		case 21:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
@@ -2345,11 +2377,83 @@ static double eval_ef(Atom fname, int ar, double *a)
 		case 29:return f(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],
 				a[10],a[11],a[12],a[13],a[14],a[15],a[16],a[17],a[18],a[19],
 				a[20],a[21],a[22],a[23],a[24],a[25],a[26],a[27],a[28]);
+case  30:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30]);
+case  31:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31]);
+case  32:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32]);
+case  33:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33]);
+case  34:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34]);
+case  35:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35]);
+case  36:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36]);
+case  37:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37]);
+case  38:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38]);
+case  39:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39]);
+case  40:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40]);
+case  41:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41]);
+case  42:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42]);
+case  43:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43]);
+case  44:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44]);
+case  45:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45]);
+case  46:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46]);
+case  47:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47]);
+case  48:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48]);
+case  49:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49]);
+case  50:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50]);
+case  51:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51]);
+case  52:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52]);
+case  53:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53]);
+case  54:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54]);
+case  55:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55]);
+case  56:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56]);
+case  57:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57]);
+case  58:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58]);
+case  59:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59]);
+case  60:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60]);
+case  61:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61]);
+case  62:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62]);
+case  63:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63]);
+case  64:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64]);
+case  65:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65]);
+case  66:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66]);
+case  67:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67]);
+case  68:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68]);
+case  69:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69]);
+case  70:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70]);
+case  71:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71]);
+case  72:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72]);
+case  73:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73]);
+case  74:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74]);
+case  75:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75]);
+case  76:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76]);
+case  77:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77]);
+case  78:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78]);
+case  79:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79]);
+case  80:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80]);
+case  81:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81]);
+case  82:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82]);
+case  83:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83]);
+case  84:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84]);
+case  85:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85]);
+case  86:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86]);
+case  87:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87]);
+case  88:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88]);
+case  89:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89]);
+case  90:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90]);
+case  91:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91]);
+case  92:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92]);
+case  93:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93]);
+case  94:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94]);
+case  95:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95]);
+case  96:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95],a[ 96]);
+case  97:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95],a[ 96],a[ 97]);
+case  98:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95],a[ 96],a[ 97],a[ 98]);
+case  99:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95],a[ 96],a[ 97],a[ 98],a[ 99]);
+case 100:return f(a[  0],a[  1],a[  2],a[  3],a[  4],a[  5],a[  6],a[  7],a[  8],a[  9],a[ 10],a[ 11],a[ 12],a[ 13],a[ 14],a[ 15],a[ 16],a[ 17],a[ 18],a[ 19],a[ 20],a[ 21],a[ 22],a[ 23],a[ 24],a[ 25],a[ 26],a[ 27],a[ 28],a[ 29],a[ 30],a[ 31],a[ 32],a[ 33],a[ 34],a[ 35],a[ 36],a[ 37],a[ 38],a[ 39],a[ 40],a[ 41],a[ 42],a[ 43],a[ 44],a[ 45],a[ 46],a[ 47],a[ 48],a[ 49],a[ 50],a[ 51],a[ 52],a[ 53],a[ 54],a[ 55],a[ 56],a[ 57],a[ 58],a[ 59],a[ 60],a[ 61],a[ 62],a[ 63],a[ 64],a[ 65],a[ 66],a[ 67],a[ 68],a[ 69],a[ 70],a[ 71],a[ 72],a[ 73],a[ 74],a[ 75],a[ 76],a[ 77],a[ 78],a[ 79],a[ 80],a[ 81],a[ 82],a[ 83],a[ 84],a[ 85],a[ 86],a[ 87],a[ 88],a[ 89],a[ 90],a[ 91],a[ 92],a[ 93],a[ 94],a[ 95],a[ 96],a[ 97],a[ 98],a[ 99],a[100]);
+
 		default:
 				puts("Internal error (evlef02)");
 				return 0.0;
 		}
-	}	
+	}
 
 
 
@@ -2359,21 +2463,21 @@ Term rm_zero(Term t)
 	int i;
 	if(!is_compound(t))
 		return t;
-	
+
 	return t;
-	
+
 	for(i=1;i<=CompoundArity(t);i++)
 	{
 		SetCompoundArg(t,i,rm_zero(ConsumeCompoundArg(t,i)));
 	}
-	
+
 	if(CompoundName(t)==OPR_POW && CompoundArity(t)==2 && 
 			CompoundArg1(t)==NewInteger(0))
 	{
 		FreeAtomic(t); 
 		return NewInteger(0);
 	}
-	
+
 	if(CompoundName(t)==OPR_MLT && CompoundArity(t)==2 && 
 			(CompoundArg1(t)==NewInteger(0) || CompoundArg2(t)==NewInteger(0)))
 	{
@@ -2405,7 +2509,7 @@ Term rm_zero(Term t)
 		t1=rm_zero(t1);
 		return t1==NewInteger(0)?NewInteger(0):MakeCompound1(OPR_MINUS,t1);
 	}
-	
+
 	return t;
 }
 
