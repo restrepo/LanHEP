@@ -1,13 +1,11 @@
 %
-% Standard Model + singlet scalar - unitary and t'Hooft-Feynman gauges.
-% Author Jose David Ruiz jotadram6 AT gmail.com
-% Based in LanHEP file for Standard Model
+% Singlet Model - unitary and t'Hooft-Feynman gauges.
 %
 
 keys gauge_fixing=unitary.
 
 do_if gauge_fixing==Feynman.
-    model 'Stand. Model (Feyn. gauge)'/4.
+    model 'Stand. Model plus Singlet (Feyn. gauge)'/1.
 do_else_if gauge_fixing==unitary.
     model 'Stand. Model plus Singlet (un. gauge)'/1.
 do_else.
@@ -79,18 +77,18 @@ spinor 		n1:(neutrino, left), 	   e1:(electron),
 		n2:('mu-neutrino', left),   e2:(muon, mass Mm = 0.1057),
 		n3:('tau-neutrino', left),  e3:('tau-lepton', mass Mt  = 1.777).
 
-spinor		u:('u-quark',color c3),
-		d:('d-quark',color c3),
+spinor		u:('u-quark',color c3, mass Mup = 0.003),
+		d:('d-quark',color c3, mass Mdo = 0.006),
 		c:('c-quark',color c3, mass Mc  = 1.300),
 		s:('s-quark',color c3, mass Ms = 0.200),
 		t:('t-quark',color c3, mass Mtop = 170, width wtop = 1.442),
 		b:('b-quark',color c3, mass Mb =  4.300).
 
-scalar H/H:(Higgs, mass MH = 200, width wH = 1.461).
+scalar H/H:(Higgs, mass MH = 140, width wH = 1.461).
 
-scalar 'Si'/'Si':('S-singlet', mass MSi = 246).
+scalar '~Si'/'~Si':('S-singlet', mass MSi = 246).
 
-prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, H=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, Si=26).
+prtcprop pdg:(d=1, u=2, s=3,c=4, b=5, t=6, G=21, A=22, Z=23, 'W+'=24, H=37, e1=11, n1=12, e2=13, n2=14, e3=15, n3=16, '~Si'=26).
 			
 let l1={n1,e1}, L1={N1,E1}.
 let l2={n2,e2}, L2={N2,E2}.
@@ -255,11 +253,11 @@ SetAngle(1-SW**2=CW**2).
 
 %Higgs-S singlet interaction
 
-lterm (('Si'**2)*(MSi**2))/2.
+lterm (('~Si'**2)*(MSi**2))/2.
 
-lterm (LS/4)*'Si'**4+L*246*H*'Si'**2.
+lterm (LS/4)*'~Si'**4+L*vev(2*MW/EE*SW)*H*'~Si'**2.
 
-lterm (L/2)*(H**2)*'Si'**2.
+lterm (L/2)*(H**2)*'~Si'**2.
 
 CheckHerm.
 
