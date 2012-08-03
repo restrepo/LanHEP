@@ -28,7 +28,7 @@ prtcformat fullname:'  Full Name  ',
            atexname:'>  LaTeX aP name < '.
 
 parameter  EE  = 0.31333 : 'Electromagnetic coupling constant (<->1/128)',
-	   GG  = 1.117   : 'Strong coupling constant (Z point)  (PDG-94)',
+	   GG  = 1.220   : 'Strong coupling constant (Z point)  (PDG-94)',
 	   SW  = 0.4740  : 'sin of the Weinberg angle (PDG-94,"on-shell")',
            s12 = 0.221   : 'Parameter of C-K-M matrix (PDG-94)',
 	   s23 = 0.040   : 'Parameter of C-K-M matrix (PDG-94)',
@@ -163,7 +163,7 @@ lterm  	anti(psi)*gamma*(1+g5)/2*(i*deriv - Y*g1*B1)*psi
 
 % quark-gluon interaction
 
-lterm  GG*anti(psi)*lambda*gamma*G*psi where
+lterm  GG*anti(psi)*gamma*lambda*G*psi where
 	psi=q1; psi=q2; psi=q3.
 
 do_if gauge_fixing==Feynman.
@@ -205,12 +205,12 @@ lterm  -M/MW/Sqrt2*g*(anti(pl)*(1+g5)/2*pr*pp + anti(pr)*(1-g5)/2*pl*PP )
 	M=Mt,  pl=l3,  pr=e3.
 	
 
-
+%scalar potencial
 lterm -2*lambda*(pp*PP-v**2/2)**2  where 
 	lambda=(g*MH/MW)**2/16, v=2*MW*SW/EE.
 
 
-
+%DPP*Dpp|_{singlet}=deriv^mu*PP^a*deriv^mu*pp^a=(1/2)*(deriv^mu*H)*(deriv^mu*H)
 let Dpp^mu^a = (deriv^mu+i*g1/2*B1^mu)*pp^a +
 	 i*g/2*taupm^a^b^c*WW^mu^c*pp^b.
 
@@ -222,6 +222,7 @@ let DPP^mu^a = (deriv^mu-i*g1/2*B1^mu)*PP^a
 lterm DPP*Dpp.
 
 
+%not contributions to the Euler-Lagrange equations
 lterm -i*GG*f_SU3*ccghost(G)*G^mu*deriv^mu*ghost(G).
 lterm  -1/2*(deriv*G)**2.
 
@@ -251,13 +252,14 @@ end_if.
 
 SetAngle(1-SW**2=CW**2).
 
+
 %Higgs-S singlet interaction
 
-lterm (('~Si'**2)*(MSi**2))/2.
+lterm -(('~Si'**2)*(MSi**2))/2.
 
-lterm (LS/4)*'~Si'**4+L*vev(2*MW/EE*SW)*H*'~Si'**2.
+lterm -(LS/4)*'~Si'**4-L*'~Si'**2*pp*PP.
 
-lterm (L/2)*(H**2)*'~Si'**2.
+lterm (deriv^mu*'~Si'*deriv^mu*'~Si')*1/2.
 
 CheckHerm.
 

@@ -36,9 +36,9 @@ E3   |n3   |W-   |     |-EE*Sqrt2/(4*SW)                                  |G(m3)
 G    |G    |G    |     |GG                                                |m2.p3*m1.m3-m1.p3*m2.m3+m3.p1*m1.m2-m2.p1*m1.m3-m3.p2*m1.m2+m1.p2*m2.m3
 G.C  |G.c  |G    |     |GG                                                |m3.p2
 H    |H    |H    |     |-3*EE*MH^2/(2*MW*SW)                              |1
-H    |Si   |Si   |     |492*L                                             |1
 H    |W+   |W-   |     |EE*MW/SW                                          |m2.m3
 H    |Z    |Z    |     |EE*MW/(CW^2*SW)                                   |m2.m3
+H    |~Si  |~Si  |     |-4*L*MW*SW/EE                                     |1
 N1   |e1   |W+   |     |-EE*Sqrt2/(4*SW)                                  |G(m3)*(1-G5)
 N1   |n1   |Z    |     |-EE/(4*CW*SW)                                     |G(m3)*(1-G5)
 N2   |e2   |W+   |     |-EE*Sqrt2/(4*SW)                                  |G(m3)*(1-G5)
@@ -70,9 +70,9 @@ A    |A    |W+   |W-   |-EE^2                                             |2*m1.
 A    |W+   |W-   |Z    |-CW*EE^2/SW                                       |2*m1.m4*m2.m3-m1.m2*m3.m4-m1.m3*m2.m4
 G    |G    |G.t  |     |GG*Sqrt2/2                                        |m1.m3*m2.M3-m1.M3*m2.m3
 H    |H    |H    |H    |-3*EE^2*MH^2/(4*MW^2*SW^2)                        |1
-H    |H    |Si   |Si   |2*L                                               |1
 H    |H    |W+   |W-   |EE^2/(2*SW^2)                                     |m3.m4
 H    |H    |Z    |Z    |EE^2/(2*CW^2*SW^2)                                |m3.m4
-Si   |Si   |Si   |Si   |6*LS                                              |1
+H    |H    |~Si  |~Si  |-2*L                                              |1
 W+   |W+   |W-   |W-   |EE^2/SW^2                                         |2*m1.m2*m3.m4-m1.m4*m2.m3-m1.m3*m2.m4
 W+   |W-   |Z    |Z    |-CW^2*EE^2/SW^2                                   |2*m1.m2*m3.m4-m1.m3*m2.m4-m1.m4*m2.m3
+~Si  |~Si  |~Si  |~Si  |-6*LS                                             |1

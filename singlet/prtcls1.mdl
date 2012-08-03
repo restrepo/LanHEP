@@ -11,11 +11,11 @@ mu-neutrino  |n2 |N2  |14      |1    |0   |0    |1    |L  |\nu^\mu           |\b
 muon         |e2 |E2  |13      |1    |Mm  |0    |1    |   |\mu               |\bar{\mu}          |
 tau-neutrino |n3 |N3  |16      |1    |0   |0    |1    |L  |\nu^\tau          |\bar{\nu}^\tau     |
 tau-lepton   |e3 |E3  |15      |1    |Mt  |0    |1    |   |\tau              |\bar{\tau}         |
-u-quark      |u  |U   |2       |1    |0   |0    |3    |   |u                 |\bar{u}            |
-d-quark      |d  |D   |1       |1    |0   |0    |3    |   |d                 |\bar{d}            |
+u-quark      |u  |U   |2       |1    |Mup |0    |3    |   |u                 |\bar{u}            |
+d-quark      |d  |D   |1       |1    |Mdo |0    |3    |   |d                 |\bar{d}            |
 c-quark      |c  |C   |4       |1    |Mc  |0    |3    |   |c                 |\bar{c}            |
 s-quark      |s  |S   |3       |1    |Ms  |0    |3    |   |s                 |\bar{s}            |
 t-quark      |t  |T   |6       |1    |Mtop|wtop |3    |   |t                 |\bar{t}            |
 b-quark      |b  |B   |5       |1    |Mb  |0    |3    |   |b                 |\bar{b}            |
 Higgs        |H  |H   |37      |0    |MH  |wH   |1    |   |H                 |H                  |
-S-singlet    |Si |Si  |26      |0    |MSi |0    |1    |   |Si                |Si                 |
+S-singlet    |~Si|~Si |26      |0    |MSi |0    |1    |   |(Si)              |(Si)               |
